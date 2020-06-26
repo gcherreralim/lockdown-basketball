@@ -13,7 +13,6 @@ library(lubridate)
 library(plotly)
 library(shinydashboard)
 library(caret)
-library(reshape2)
 library(formattable)
 library(data.table)
 library(plotly)
@@ -25,3 +24,8 @@ library(leaflet)
 library(reshape2)
 library(class)
 library(FNN)
+
+#Loading Data
+fullteams = readr::read_csv("fullteams.csv")
+
+hello = "hello"
