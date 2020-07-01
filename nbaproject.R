@@ -54,5 +54,3 @@ fullteams = teams %>%
   inner_join(stuffer, by = "teamcode")
 
 write_csv(fullteams, path = "/Users/GabbyHL/Desktop/NBA-lineupscraping-trial/NBA Project/fullteams.csv", na = "NA", col_names = TRUE)
-
-hello = "hello"
