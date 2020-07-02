@@ -18,21 +18,17 @@ ui <- (
       
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
       tabPanel("Team Evaluation",
-               sidebarPanel(imageOutput("TEteam1img"),
-                            textOutput("TEteam1text"),
-                            textOutput("TEseason1text"),
-                            width=2,
-                            varSelectInput("TEteam1", "Team 1:", sort(unique(fullteams$team)), selected = "LAL"),
-                            varSelectInput("TEseason1","Season:", sort(unique(fullteams$season)), selected = "2019"),
+               sidebarPanel(width = 2,
+                            selectizeInput(
+                              inputId = "TEteams",
+                              label = "Select up to 5 teams:",
+                              choices = fullteams$TeamCode,
+                              multiple = TRUE,
+                              selected = NULL,
+                              options = list(maxItems = 5)),
                             br(),
-                            imageOutput("TEteam2img"),
-                            textOutput("TEteam2text"),
-                            textOutput("TEseason2text"),
-                            varSelectInput("TEteam2", "Team 2:", sort(unique(fullteams$team)), selected = "MIL"),
-                            varSelectInput("TEseason2","Season:", sort(unique(fullteams$season)), selected = "2019"),
-                            br(),
-                            varSelectInput("TExaxis", "X-Axis Variable", fullteams[,3:20], selected="points_per_poss"),
-                            varSelectInput("TEyaxis", "Y-Axis Variable", fullteams[,3:20], selected="score_freq")),
+                            # varSelectInput("TExaxis", "X-Axis Variable", names(fullteams[,3:20]), selected="points_per_poss"),
+                            # varSelectInput("TEyaxis", "Y-Axis Variable", names(fullteams[,3:20]), selected="score_freq")),
                mainPanel(
                  textOutput("TEChartTitle"),
                  plotOutput("TEChart")
@@ -40,11 +36,69 @@ ui <- (
       
       
       ########## UI CODE FOR 'PLAY TYPE COMPARISONS' TAB ##########
-      tabPanel("Play Type Comparisons"),
+      tabPanel("Play Type Comparisons",
+               fluidRow(
+                 column(2,
+                        fluidRow(h5("Selected Team")),
+                        fluidRow(uiOutput("PTCselectedteam"))),
+                 column(10,
+                        fluidRow(h5("Matched Teams:")),
+                        fluidRow(
+                          column(1,
+                                 uiOutput("PTC_team1")),
+                          column(1,
+                                 uiOutput("PTC_team2")),
+                          column(1,
+                                 uiOutput("PTC_team3")),
+                          column(1,
+                                 uiOutput("PTC_team3")),
+                          column(1,
+                                 uiOutput("PTC_team4")),
+                          column(1,
+                                 uiOutput("PTC_team5"))))),
+               br(),
+               sidebarLayout(
+                 sidebarPanel(width = 3,
+                              selectInput("PTC_team", "Team:",
+                                          unique(fullteams$Team),
+                                          selectize = TRUE,
+                                          selected = "MIL"),
+                              selectInput("PTC_season", "Season:",
+                                          unique(fullteams$SeasonRange),
+                                          selectize = TRUE,
+                                          selected = "2019-2020"),
+                              radioButtons("PTC_metric", "Metric",
+                                           choices = c("Frequency", "Efficiency"),
+                                           selected = "Frequency"),
+                              radioButtons("PTC_offdef", "Possession Type",
+                                           choices = unique(fullteams$OffDef),
+                                           selected = "offense"),
+                              actionButton("PTC_reset", "Reset")),
+                 mainPanel(width = 9,
+                           tabsetPanel(
+                             tabPanel("Points Per Possession",
+                                      h3("Points Per Possession"),
+                                      plotlyOutput("PTC_PPPplot"),
+                                      hr(),
+                                      reactableOutput("PTC_PPPtable")),
+                             tabPanel("Playtype Percentile",
+                                      h3("Playtype Percentile"),
+                                      plotlyOutput("PTC_PERCplot"),
+                                      hr(),
+                                      reactableOutput("PTC_PERCtable")))))),
       
-      
-      ########## UI CODE FOR 'GENERAL TEAM COMPARISONS' TAB ##########
-      tabPanel("General Team Comparisons"),
+      ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
+      tabPanel("Multiple Team Playtype Comparisons",
+               sidebarPanel(width = 2,
+                            selectizeInput(
+                              inputId = "MTC_teams",
+                              label = "Select up to 5 teams to compare:",
+                              choices = fullteams$TeamCode,
+                              multiple = TRUE,
+                              selected = NULL,
+                              options = list(maxItems = 5))),
+               
+                            ))),
       
       
       ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
@@ -57,40 +111,7 @@ ui <- (
   )
 )
 
-ui <- (
-  fluidPage(
-    theme = shinytheme("sandstone"),
-    navbarPage(
-      title = div(img(src="ncaa logo.jpg", style="margin-top: -14px;", height = 57, "Team Matcher")),
-      windowTitle = "NCAA Team Matcher",
-      tabPanel("Graphs",
-               fluidRow(
-                 column(2,
-                        fluidRow(h5(tags$b("Selected Team:"))),
-                        fluidRow(uiOutput("selected_team_home"))),
-                 column(10,
-                        fluidRow(h5(tags$b("Matched Teams:"))),
-                        fluidRow(
-                          column(1,
-                                 uiOutput("team_1_home")),
-                          column(1,
-                                 uiOutput("team_2_home")),
-                          column(1, 
-                                 uiOutput("team_3_home")),
-                          column(1, 
-                                 uiOutput("team_4_home")),
-                          column(1,
-                                 uiOutput("team_5_home")),
-                          column(1, 
-                                 uiOutput("team_6_home")),
-                          column(1, 
-                                 uiOutput("team_7_home")),
-                          column(1, 
-                                 uiOutput("team_8_home")),
-                          column(1, 
-                                 uiOutput("team_9_home")),
-                          column(1, 
-                                 uiOutput("team_10_home"))))),
+###### DON'T KEEP ######
                br(),
                sidebarLayout(
                  sidebarPanel(width = 4,
@@ -139,6 +160,7 @@ ui <- (
                                           type = "button", 
                                           class="btn btn-danger action-button",
                                           onclick="history.go(0)")),
+                 
                  mainPanel(width = 8,
                            tabsetPanel(
                              tabPanel("Four Factors",
