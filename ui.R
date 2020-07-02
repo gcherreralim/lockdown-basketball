@@ -97,7 +97,8 @@ ui <- (
                               multiple = TRUE,
                               selected = NULL,
                               options = list(maxItems = 5))),
-               
+               mainPanel(width = 8,
+                         fluidRow)
                             ))),
       
       
