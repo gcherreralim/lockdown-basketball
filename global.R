@@ -5,7 +5,6 @@ library(magrittr)
 library(DT)
 library(reactable)
 library(shinyWidgets)
-library(shinysky)
 library(tidyverse)
 library(httr)
 library(stringr)
@@ -44,3 +43,26 @@ colnamesNew = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "Win
                 "RebPerc", "TOVPerc", "eFGPercSeason", "TSPerc", "PIE", "Playoff")
 
 colnames(fullteams) = colnamesNew
+
+playtypes = fullteams[c(1:9,13:29,54)]
+genteams = fullteams[c(1:12,17,30:54)]
+
+playtypeFreq = playtypes %>%
+  select(Team, TeamCode, Conf, Div, Season, SeasonRange, PlayType, OffDef, Freq) %>%
+  pivot_wider(names_from = PlayType, values_from = Freq) %>%
+  select(-misc, misc)
+
+playtypeEff = playtypes %>%
+  select(Team, TeamCode, Conf, Div, Season, SeasonRange, PlayType, OffDef, PPP) %>%
+  pivot_wider(names_from = PlayType, values_from = PPP) %>%
+  select(-misc, misc)
+
+playtypePerc = playtypes %>%
+  select(Team, TeamCode, Conf, Div, Season, SeasonRange, PlayType, OffDef, Percentile) %>%
+  pivot_wider(names_from = PlayType, values_from = Percentile) %>%
+  select(-misc, misc)
+
+colnamesPT = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "OffDef", "Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks","SpotUp", "Transition", "Misc")
+colnames(playtypeFreq) = colnamesPT
+colnames(playtypeEff) = colnamesPT
+colnames(playtypePerc) = colnamesPT
