@@ -1,3 +1,16 @@
+### USED PACKAGES
+pack = c("shiny", "shinythemes", "ggplot2", "magrittr", "DT", "reactable",
+         "shinyWidgets", "tidyverse", "httr", "stringr", "lubridate", "plotly",
+         "shinydashboard", "caret", "formattable", "data.table", "highcharter",
+         "RColorBrewer", "htmltools", "shinyjs", "leaflet", "reshape2", "class", "FNN")
+
+# VERIFY PACKAGES
+package.check <- lapply(pack, FUN = function(x) {
+  if (!require(x, character.only = TRUE)) {
+    install.packages(x, dependencies = TRUE)
+  }
+})
+
 library(shiny)
 library(shinythemes)
 library(ggplot2)
