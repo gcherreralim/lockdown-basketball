@@ -2,7 +2,11 @@ ui <- (
   fluidPage(
     tags$head(HTML('<link rel="icon", href="nba-logo-transparent.png",
                    type="image/png"/>')),
+    
+    ############# CSS CHUNKS ################
     # tags$style(HTML('')),
+    ############# CSS CHUNKS ################
+    
     theme = shinytheme("yeti"),
     navbarPage(
       selected = "Home",
@@ -27,8 +31,8 @@ ui <- (
                               selected = NULL,
                               options = list(maxItems = 5)),
                             br(),
-                            # varSelectInput("TExaxis", "X-Axis Variable", names(fullteams[,3:20]), selected="points_per_poss"),
-                            # varSelectInput("TEyaxis", "Y-Axis Variable", names(fullteams[,3:20]), selected="score_freq")),
+                            varSelectInput("TExaxis", "X-Axis Variable", names(genteams[,7:53]), selected="WinPerc"),
+                            varSelectInput("TEyaxis", "Y-Axis Variable", names(genteams[,7:53]), selected="PPG")),
                mainPanel(
                  textOutput("TEChartTitle"),
                  plotOutput("TEChart")
