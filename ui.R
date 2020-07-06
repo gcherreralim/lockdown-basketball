@@ -5,8 +5,9 @@ ui <- (
     
     ############# CSS CHUNKS ################
     # tags$style(HTML('')),
-    ############# CSS CHUNKS ################
     
+    
+    ############# THEME ##############
     theme = shinytheme("yeti"),
     navbarPage(
       selected = "Home",
@@ -113,10 +114,25 @@ ui <- (
                                            "Offensive Points per Poss",
                                            plotlyOutput("MTC_OffEffPlot")),
                                     column(4,
-                                           "Offensive Percentile")
-                                    
-                                  ))
-                         ))
+                                           "Offensive Percentile",
+                                           plotlyOutput("MTC_OffPercPlot"))
+                                  ))),
+                         fluidRow(
+                           column(12,
+                                  br(),
+                                  fluidRow(
+                                    column(4,
+                                           "Defensive Freq",
+                                           plotlyOutput("MTC_DefFreqPlot")),
+                                    column(4,
+                                           "Defensive Points per Poss",
+                                           plotlyOutput("MTC_DefEffPlot")),
+                                    column(4,
+                                           "Defensive Percentile",
+                                           plotlyOutput("MTC_DefPercPlot")))
+                                  )),
+                         hr(),
+                         reactableOutput("MTC_SumTable"))
                             ),
       
       
