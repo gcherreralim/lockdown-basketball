@@ -17,7 +17,7 @@ ui <- (
       ########## UI CODE FOR 'HOME' TAB ##########
       tabPanel("Home",
                mainPanel(
-                 # includeHTML("home_html/home.html")
+                 includeHTML("html_pages/home.html"),
                  h1("Hello")
                )),
       
@@ -137,11 +137,27 @@ ui <- (
       
       
       ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
-      tabPanel("5-Year Window Analysis"),
+      tabPanel("5-Year Window Analysis",
+               h4("Select row to see additional data"),
+               reactableOutput("WA_Table"),
+               hr(),
+               fluidRow(
+                 column(3,
+                        plotOutput("WA_plot1")),
+                 column(3,
+                        plotOutput("WA_plot2")),
+                 column(3,
+                        plotOutput("WA_plot3")),
+                 column(3,
+                        plotOutput("WA_plot4"))
+               )),
       
       
       ########## UI CODE FOR 'ABOUT US' TAB ##########
-      tabPanel("About Us")
+      tabPanel("About Us",
+               mainPanel(
+                 includeHTML("html_pages/about.html")
+               ))
     )
   )
 )
