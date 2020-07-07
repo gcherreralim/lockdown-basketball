@@ -7,14 +7,19 @@ server <- function(input,output,session){
       session = session,
       inputId = "TEteams",
       label = "Select up to 10 teams:",
-      choices = unique(genteams$TeamCode),
+      choices = list(
+        hi = list(unique(genteams$TeamCode[genteams$Season == 2016])),
+        hi2 = list(unique(genteams$TeamCode[genteams$Season == 2017])),
+        hi3 = list(unique(genteams$TeamCode[genteams$Season == 2018])),
+        hi4 = list(unique(genteams$TeamCode[genteams$Season == 2019])),
+        hi5 = list(unique(genteams$TeamCode[genteams$Season == 2020]))),
       selected = NULL)
   })
   
   TE_out1 = reactive({
     validate(
-      need(input$TEteams != "",
-           "Please select at least one team to see plot results!")
+      need(length(input$TEteams) > 1,
+           "Please select at least two teams to see plot and table results!")
     )
     
     genteams %>%
@@ -38,7 +43,8 @@ server <- function(input,output,session){
   output$TEChart = renderPlot({
     req(input$TExaxis, input$TEyaxis)
     ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
-                          xmax = max(TE_var1()), ymax = max(TE_var2()))) +
+                          xmax = max(TE_var1()), ymax = max(TE_var2()), 
+                          color = name, fill = name)) +
       geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
       ggrepel::geom_label_repel(aes(label = TeamCode), show.legend = F,
                                 fontface = "bold",
@@ -58,10 +64,32 @@ server <- function(input,output,session){
   output$TEtable = renderReactable({
     reactable(TE_out1(), pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "WinPerc", defaultSortOrder = "desc",
               defaultColDef = colDef(align = "center",
-                                     minWidth = 30),
+                                     minWidth = 60),
               columns = list(
                 Team = colDef(show = FALSE),
-                
+                TeamCode = colDef(name = "Team"),
+                Div = colDef(name = "Division"),
+                Season = colDef(show = FALSE),
+                SeasonRange = colDef(name = "Season"),
+                Wins = colDef(name = "W"),
+                Losses = colDef(name = "L"),
+                WinPerc = colDef(name = "Pct"),
+                EstWinPerc = colDef(show = FALSE),
+                ProjWinPerc = colDef(show = FALSE),
+                AchLevel = colDef(show = FALSE),
+                AvgPTDiff = colDef(name = "Diff"),
+                EFFDiff = colDef(name = "eDiff"),
+                ASTPerc = colDef(name = "AST%"),
+                ORebPerc = colDef(name = "OREB%"),
+                DRebPerc = colDef(name = "DREB%"),
+                RebPerc = colDef(name = "REB%"),
+                TOVPerc = colDef(name = "TOV%"),
+                eFGPercSeason = colDef(name = "eFG"),
+                TSPerc = colDef(name = "TS%"),
+                Playoff = colDef(show = FALSE),
+                name = colDef(show = FALSE),
+                primary = colDef(show = FALSE),
+                secondary = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)

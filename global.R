@@ -31,8 +31,10 @@ colnamesNew = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "Win
                 "RebPerc", "TOVPerc", "eFGPercSeason", "TSPerc", "PIE", "Playoff")
 
 colnames(fullteams) = colnamesNew
+#fullteams = fullteams %>%
+#  mutate(WinPerc = label_percent(accuracy = 0.01)(WinPerc))
 fullteams = fullteams %>%
-  mutate(WinPerc = label_percent(accuracy = 0.01)(WinPerc))
+  mutate(SeasonRange = as.factor(SeasonRange))
 
 playtypes = fullteams[c(1:9,13:29,54)]
 genteams = fullteams[c(1:12,30:54)]
