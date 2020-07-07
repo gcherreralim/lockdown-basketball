@@ -157,7 +157,7 @@ ui <- (
       ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
       tabPanel("5-Year Window Analysis",
                h4("Select row to see additional data"),
-               DT::dataTableOutput("WA_Table"),
+               reactableOutput("WA_Table"),
                hr(),
                fluidRow(
                  column(3,
@@ -168,7 +168,8 @@ ui <- (
                         plotOutput("WA_plot3")),
                  column(3,
                         plotOutput("WA_plot4"))
-               )),
+               ),
+               plotOutput("WA_trialplot")),
       
       
       ########## UI CODE FOR 'ABOUT US' TAB ##########

@@ -1,3 +1,11 @@
+server <- function(input,output,session){
+  
+  ############## SERVER CODE FOR ################
+  
+  
+  
+}
+
 # # Server
 # server <- function(input, output, session){
 #   

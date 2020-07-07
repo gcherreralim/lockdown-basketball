@@ -2,7 +2,8 @@
 pack = c("shiny", "shinythemes", "ggplot2", "magrittr", "DT", "reactable",
          "shinyWidgets", "tidyverse", "httr", "stringr", "lubridate", "plotly",
          "shinydashboard", "caret", "formattable", "data.table", "highcharter",
-         "RColorBrewer", "htmltools", "shinyjs", "leaflet", "reshape2", "class", "FNN")
+         "RColorBrewer", "htmltools", "shinyjs", "leaflet", "reshape2", "class", 
+         "FNN", "teamcolors", "ggrepel")
 
 # VERIFY PACKAGES
 package.check <- lapply(pack, FUN = function(x) {
@@ -11,31 +12,6 @@ package.check <- lapply(pack, FUN = function(x) {
   }
 })
 
-library(shiny)
-library(shinythemes)
-library(ggplot2)
-library(magrittr)
-library(DT)
-library(reactable)
-library(shinyWidgets)
-library(tidyverse)
-library(httr)
-library(stringr)
-library(lubridate)
-library(plotly)
-library(shinydashboard)
-library(caret)
-library(formattable)
-library(data.table)
-library(plotly)
-library(highcharter)
-library(RColorBrewer)
-library(htmltools)
-library(shinyjs)
-library(leaflet)
-library(reshape2)
-library(class)
-library(FNN)
 
 #Loading Data
 fullteams = readr::read_csv("fullteams2.csv")
@@ -58,7 +34,10 @@ colnamesNew = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "Win
 colnames(fullteams) = colnamesNew
 
 playtypes = fullteams[c(1:9,13:29,54)]
-genteams = fullteams[c(1:12,17,30:54)]
+genteams = fullteams[c(1:12,30:54)]
+
+genteams = genteams %>%
+  distinct()
 
 playtypeFreq = playtypes %>%
   select(Team, TeamCode, Conf, Div, Season, SeasonRange, PlayType, OffDef, Freq) %>%
