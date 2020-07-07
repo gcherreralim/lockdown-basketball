@@ -1,7 +1,8 @@
 ui <- (
   fluidPage(
     tags$head(HTML('<link rel="icon", href="nba-logo-transparent.png",
-                   type="image/png"/>')),
+                   type="image/png"/>
+                   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;900&display=swap" rel="stylesheet">')),
     
     ############# CSS CHUNKS ################
     # tags$style(HTML('')),
@@ -26,17 +27,18 @@ ui <- (
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "TEteams",
-                              label = "Select up to 5 teams:",
-                              choices = fullteams$TeamCode,
+                              label = "Select up to 10 teams:",
+                              choices = unique(genteams$TeamCode),
                               multiple = TRUE,
                               selected = NULL,
-                              options = list(maxItems = 5)),
+                              options = list(maxItems = 10)),
                             br(),
                             varSelectInput("TExaxis", "X-Axis Variable", names(genteams[,7:37]), selected="WinPerc"),
                             varSelectInput("TEyaxis", "Y-Axis Variable", names(genteams[,7:37]), selected="PPG")),
                mainPanel(
                  textOutput("TEChartTitle"),
-                 plotOutput("TEChart")
+                 plotOutput("TEChart"),
+                 reactableOutput("TEtable")
                )),
       
       

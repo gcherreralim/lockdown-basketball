@@ -3,7 +3,7 @@ pack = c("shiny", "shinythemes", "ggplot2", "magrittr", "DT", "reactable",
          "shinyWidgets", "tidyverse", "httr", "stringr", "lubridate", "plotly",
          "shinydashboard", "caret", "formattable", "data.table", "highcharter",
          "RColorBrewer", "htmltools", "shinyjs", "leaflet", "reshape2", "class", 
-         "FNN", "teamcolors", "ggrepel")
+         "FNN", "teamcolors", "ggrepel", "extrafont", "showtext","scales")
 
 # VERIFY PACKAGES
 package.check <- lapply(pack, FUN = function(x) {
@@ -11,7 +11,6 @@ package.check <- lapply(pack, FUN = function(x) {
     install.packages(x, dependencies = TRUE)
   }
 })
-
 
 #Loading Data
 fullteams = readr::read_csv("fullteams2.csv")
@@ -32,6 +31,8 @@ colnamesNew = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "Win
                 "RebPerc", "TOVPerc", "eFGPercSeason", "TSPerc", "PIE", "Playoff")
 
 colnames(fullteams) = colnamesNew
+fullteams = fullteams %>%
+  mutate(WinPerc = label_percent(accuracy = 0.01)(WinPerc))
 
 playtypes = fullteams[c(1:9,13:29,54)]
 genteams = fullteams[c(1:12,30:54)]
@@ -58,3 +59,27 @@ colnamesPT = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "OffD
 colnames(playtypeFreq) = colnamesPT
 colnames(playtypeEff) = colnamesPT
 colnames(playtypePerc) = colnamesPT
+
+nbacolors = teamcolors %>%
+  filter(league == "nba") %>%
+  select(name, primary, secondary)
+
+nbacolors[3,3] = "#FFFFFF"
+
+abbrev = c("ATL","BOS", "BKN", "CHA", "CHI", "CLE", "DAL", "DEN", "DET", "GSW", "HOU", "IND", "LAC", "LAL", "MEM", "MIA", "MIL", "MIN", "NOP", "NYK", "OKC", "ORL",
+           "PHI", "PHX", "POR", "SAC", "SAS", "TOR", "UTA", "WAS")
+nbacolors$abbrev = abbrev
+nbacolors = nbacolors %>%
+  select(name, abbrev, primary, secondary)
+
+genteams = genteams %>%
+  left_join(nbacolors, by = c("Team" = "abbrev"))
+playtypeEff = playtypeEff %>%
+  left_join(nbacolors, by = c("Team" = "abbrev"))
+playtypeFreq = playtypeFreq %>%
+  left_join(nbacolors, by = c("Team" = "abbrev"))
+playtypePerc = playtypePerc %>%
+  left_join(nbacolors, by = c("Team" = "abbrev"))
+playtypes = playtypes %>%
+  left_join(nbacolors, by = c("Team" = "abbrev"))
+
