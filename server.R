@@ -8,11 +8,11 @@ server <- function(input,output,session){
       inputId = "TEteams",
       label = "Select up to 10 teams:",
       choices = list(
-        hi = list(unique(genteams$TeamCode[genteams$Season == 2016])),
-        hi2 = list(unique(genteams$TeamCode[genteams$Season == 2017])),
-        hi3 = list(unique(genteams$TeamCode[genteams$Season == 2018])),
-        hi4 = list(unique(genteams$TeamCode[genteams$Season == 2019])),
-        hi5 = list(unique(genteams$TeamCode[genteams$Season == 2020]))),
+        "2015 - 2016" = sort(unique(genteams$TeamCode[genteams$Season == 2016])),
+        "2016 - 2017" = sort(unique(genteams$TeamCode[genteams$Season == 2017])),
+        "2017 - 2018" = sort(unique(genteams$TeamCode[genteams$Season == 2018])),
+        "2018 - 2019" = sort(unique(genteams$TeamCode[genteams$Season == 2019])),
+        "2019 - 2020" = sort(unique(genteams$TeamCode[genteams$Season == 2020]))),
       selected = NULL)
   })
   
@@ -37,7 +37,7 @@ server <- function(input,output,session){
   })
   
   output$TEChartTitle = renderText({
-    paste0(input$TExaxis, " - ", input$TEyaxis, " COMPARISON")
+    paste0(input$TExaxis, " - ", input$TEyaxis, " Comparison")
   })
   
   output$TEChart = renderPlot({
@@ -95,6 +95,94 @@ server <- function(input,output,session){
               highlight = TRUE)
   })
   ############## SERVER CODE FOR 'PLAY TYPE COMPARISONS' TAB ################
+  # Selected Team - Eff
+  PTCteameff = reactive({
+    playtypeEff %>%
+      filter(Team == input$PTC_team,
+             SeasonRange == input$PTC_season,
+             OffDef == input$PTC_offdef)
+  })
+  # Selected Team - Freq
+  PTCteamfreq = reactive({
+    playtypeFreq %>%
+      filter(Team == input$PTC_team,
+             SeasonRange == input$PTC_season,
+             OffDef == input$PTC_offdef)
+  })
+  
+  # Other Teams - Eff
+  PTCothereff = reactive({
+    PTCotherteamsE = playtypeEff %>%
+      filter(Conf %in% input$PTC_conf,
+             OffDef == input$PTC_offdef)
+    PTCotherteamsE
+  })
+  
+  # Other Teams - Freq
+  PTCotherfreq = reactive({
+    PTCotherteamsF = playtypeFreq %>%
+      filter(Conf %in% input$PTC_conf,
+             OffDef == input$PTC_offdef)
+    PTCotherteamsF
+  })
+  
+  # Merge - Eff
+  PTCallEff = reactive({
+    rbind(PTCteameff(), PTCothereff())
+  })
+  
+  # Merge - Freq
+  PTCallFreq = reactive({
+    rbind(PTCteamfreq(), PTCotherfreq())
+  })
+  
+  # KNN Data - Eff
+  PTC_KNNeff = reactive({
+    KNNeff = PTCallEff() %>%
+      select(8:17)
+    KNNeff
+  })
+  
+  # KNN Data - Freq
+  PTC_KNNfreq = reactive({
+    KNNfreq = PTCallFreq() %>%
+      select(8:17)
+    KNNfreq
+  })
+  
+  # Z-Normalization Eff
+  PTC_zscoreEff = reactive({
+    data.frame(scale(PTC_KNNeff()))
+  })
+  
+  # Z-Normalization Freq
+  PTC_zscoreFreq = reactive({
+    data.frame(scale(PTC_KNNfreq()))
+  })
+  
+  # KNN Eff
+  PTC_KNNmatch_e = reactive({
+    as.numeric(knnx.index(PTC_zscoreEff(), PTC_zscoreEff()[1, drop = FALSE], k = 6))
+  })
+  
+  # KNN Freq
+  PTC_KNNmatch_f = reactive({
+    as.numeric(knnx.index(PTC_zscoreFreq(), PTC_zscoreFreq()[1, drop = FALSE], k = 6))
+  })
+  
+  # TEAM MATCHES
+  PTC_match_e = reactive({
+    allmatch_e = PTCallEff()[PTC_KNNmatch_e(),]
+    selteam_e = allmatch_e[1,]
+    othermatch = allmatch_e[-1,] %>%
+      arrange(TeamCode)
+  })
+  
+  
+  
+  
+  
+  
   
   
   ############## SERVER CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ################
