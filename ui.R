@@ -37,13 +37,14 @@ ui <- (
                               multiple = TRUE,
                               selected = NULL,
                               options = list(maxItems = 10)),
-                            br(),
+                            shiny::br(),
                             varSelectInput("TExaxis", "X-Axis Variable", genteams[,7:36], selected="oEFF"),
-                            varSelectInput("TEyaxis", "Y-Axis Variable", genteams[,7:36], selected="WinPerc")),
+                            varSelectInput("TEyaxis", "Y-Axis Variable", genteams[,7:36], selected="WinPerc"),
+                            actionButton("TE_reset", "Reset")),
                mainPanel(width = 10,
-                 textOutput("TEChartTitle"),
-                 plotOutput("TEChart"),
-                 reactableOutput("TEtable")
+                 shiny::textOutput("TEChartTitle"),
+                 shiny::plotOutput("TEChart"),
+                 reactable::reactableOutput("TEtable")
                ))
       ,
       
@@ -72,6 +73,7 @@ ui <- (
                # br(),
                sidebarLayout(
                  sidebarPanel(width = 3,
+                              h5("Select a team:"),
                               selectInput("PTC_team", "Team:",
                                           choices = list(
                                             "East" = sort(unique(playtypes$Team[playtypes$Conf == "East"])),
@@ -83,6 +85,7 @@ ui <- (
                                           unique(playtypes$SeasonRange),
                                           selectize = TRUE,
                                           selected = "2019-2020"),
+                              h5("Matching parameters:"),
                               checkboxGroupInput("PTC_conf", "Conference:",
                                                  choices = unique(playtypes$Conf),
                                                  selected = c("West" = "West",
@@ -90,32 +93,33 @@ ui <- (
                                                  inline = TRUE),
                               radioButtons("PTC_offdef", "Possession Type",
                                            choices = unique(playtypes$OffDef),
-                                           selected = "offense"),
+                                           selected = "offense",
+                                           inline = TRUE),
                               actionButton("PTC_reset", "Reset")),
                  mainPanel(width = 9,
                            tabsetPanel(
                              tabPanel("Points Per Possession",
                                       h3("Points Per Possession"),
-                                      plotlyOutput("PTC_PPPplot",
+                                      plotly::plotlyOutput("PTC_PPPplot",
                                                    height = "400px",
                                                    width = "500px"),
-                                      hr(),
-                                      reactableOutput("PTC_PPPtable")),
+                                      shiny::hr(),
+                                      reactable::reactableOutput("PTC_PPPtable")),
                              tabPanel("Playtype Percentile",
                                       h3("Playtype Percentile"),
-                                      plotlyOutput("PTC_PERCplot",
+                                      plotly::plotlyOutput("PTC_PERCplot",
                                                    height = "400px",
                                                    width = "500px"),
-                                      hr(),
-                                      reactableOutput("PTC_PERCtable")),
+                                      shiny::hr(),
+                                      reactable::reactableOutput("PTC_PERCtable")),
                              tabPanel("Efficiency (PPP) Data",
                                       h3("Efficiency Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Points Per Possession' tab."),
-                                      reactableOutput("PTC_PPPtable2")),
+                                      reactable::reactableOutput("PTC_PPPtable2")),
                              tabPanel("Percentile Data",
                                       h3("Percentile Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
-                                      reactableOutput("PTC_PERCtable2"))))))
+                                      reactable::reactableOutput("PTC_PERCtable2"))))))
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       # tabPanel("Multiple Team Comparisons",

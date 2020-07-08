@@ -94,6 +94,13 @@ server <- function(input,output,session){
               showSortIcon = FALSE,
               highlight = TRUE)
   })
+  observeEvent(input$TE_reset,{
+    updateSelectizeInput(session, 'TEteams', selected = "")
+    updateVarSelectInput(session, 'TExaxis', selected = "oEFF")
+    updateVarSelectInput(session, 'TEyaxis', selected = "WinPerc")
+  })
+  
+  
   ############## SERVER CODE FOR 'PLAY TYPE COMPARISONS' TAB ################
   # Selected Team - Eff
   PTCteameff = reactive({
@@ -152,24 +159,24 @@ server <- function(input,output,session){
     KNNperc
   })
 
-  # Z-Normalization Eff
-  PTC_zscoreEff = reactive({
-    data.frame(scale(PTC_KNNeff()))
-  })
-
-  # Z-Normalization Freq
-  PTC_zscorePerc = reactive({
-    data.frame(scale(PTC_KNNperc()))
-  })
+  # # Z-Normalization Eff
+  # PTC_zscoreEff = reactive({
+  #   data.frame(scale(PTC_KNNeff()))
+  # })
+  # 
+  # # Z-Normalization Freq
+  # PTC_zscorePerc = reactive({
+  #   data.frame(scale(PTC_KNNperc()))
+  # })
 
   # KNN Eff
   PTC_KNNmatch_e = reactive({
-    as.numeric(knnx.index(PTC_zscoreEff(), PTC_zscoreEff()[1, ,drop = FALSE], k = 6))
+    as.numeric(knnx.index(PTC_KNNeff(), PTC_KNNeff()[1, ,drop = FALSE], k = 6))
   })
 
   # KNN Freq
   PTC_KNNmatch_p = reactive({
-    as.numeric(knnx.index(PTC_zscorePerc(), PTC_zscorePerc()[1, ,drop = FALSE], k = 6))
+    as.numeric(knnx.index(PTC_KNNperc(), PTC_KNNperc()[1, ,drop = FALSE], k = 6))
   })
 
   # TEAM MATCHES
@@ -189,6 +196,17 @@ server <- function(input,output,session){
     combine_p = rbind(selteam_p, othermatch_p)
   })
 
+  PTC_PPPdata = reactive({
+    PTC_match_e() %>%
+    select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+  })
+  
+  PTC_PERCdata = reactive({
+    PTC_match_p() %>%
+      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+  })
+  
+  
   ### Graph
   # Eff Plot
   output$PTC_PPPplot = renderPlotly({
@@ -196,23 +214,18 @@ server <- function(input,output,session){
       need(dim(PTCothereff())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
     )
 
-    PTC_PPPdata = PTC_match_e() %>%
-      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
-
     PTC_effplot = plot_ly(type = "scatterpolar",
                           mode = "closest",
-                          fill = "toself")
-
-    PTC_effplot = PTC_effplot %>%
+                          fill = "toself") %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[1,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[1,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         name = PTC_match_e()[1,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[2,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[2,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -220,7 +233,7 @@ server <- function(input,output,session){
         name = PTC_match_e()[2,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[3,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[3,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -228,7 +241,7 @@ server <- function(input,output,session){
         name = PTC_match_e()[3,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[4,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[4,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -236,7 +249,7 @@ server <- function(input,output,session){
         name = PTC_match_e()[4,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[5,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[5,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -244,7 +257,7 @@ server <- function(input,output,session){
         name = PTC_match_e()[5,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PPPdata[6,]),
+        r = as.numeric(as.matrix(PTC_PPPdata()[6,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -281,23 +294,18 @@ server <- function(input,output,session){
       need(dim(PTCotherperc())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
     )
 
-    PTC_PERCdata = PTC_match_p() %>%
-      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
-
-    PTC_percplot = plot_ly(type = "scatterpolar",
+   PTC_percplot = plot_ly(type = "scatterpolar",
                           mode = "closest",
-                          fill = "toself")
-
-    PTC_percplot = PTC_percplot %>%
+                          fill = "toself") %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[1,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[1,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         name = PTC_match_p()[1,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[2,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[2,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -305,7 +313,7 @@ server <- function(input,output,session){
         name = PTC_match_p()[2,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[3,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[3,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -313,7 +321,7 @@ server <- function(input,output,session){
         name = PTC_match_p()[3,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[4,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[4,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -321,7 +329,7 @@ server <- function(input,output,session){
         name = PTC_match_p()[4,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[5,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[5,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -329,7 +337,7 @@ server <- function(input,output,session){
         name = PTC_match_p()[5,1]
       ) %>%
       add_trace(
-        r = as.matrix(PTC_PERCdata[6,]),
+        r = as.numeric(as.matrix(PTC_PERCdata()[6,])),
         theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
@@ -409,7 +417,12 @@ server <- function(input,output,session){
               highlight = TRUE)
   })
 
-  
+  observeEvent(input$PTC_reset,{
+    updateSelectInput(session, 'PTC_team', selected = "MIL")
+    updateSelectInput(session, 'PTC_season', selected = "2019-2020")
+    updateCheckboxGroupInput(session, 'PTC_conf', selected = c("West" = "West", "East" = "East"))
+    updateRadioButtons(session, 'PTC_offdef', selected = "offense")
+  })
   ############## SERVER CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ################
   
   
