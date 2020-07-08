@@ -44,33 +44,33 @@ ui <- (
                  textOutput("TEChartTitle"),
                  plotOutput("TEChart"),
                  reactableOutput("TEtable")
-               )),
-      #,
+               ))
+      ,
       
       
       ########## UI CODE FOR 'PLAY TYPE COMPARISONS' TAB ##########
       tabPanel("Play Type Comparisons",
-               fluidRow(
-                 column(2,
-                        fluidRow(h5("Selected Team")),
-                        fluidRow(uiOutput("PTCselectedteam"))),
-                 column(10,
-                        fluidRow(h5("Matched Teams:")),
-                        fluidRow(
-                          column(1,
-                                 uiOutput("PTC_team1")),
-                          column(1,
-                                 uiOutput("PTC_team2")),
-                          column(1,
-                                 uiOutput("PTC_team3")),
-                          column(1,
-                                 uiOutput("PTC_team3")),
-                          column(1,
-                                 uiOutput("PTC_team4")),
-                          column(1,
-                                 uiOutput("PTC_team5"))))),
-               br(),
-               sidebarLayout( 
+               # fluidRow(
+               #   column(2,
+               #          fluidRow(h5("Selected Team")),
+               #          fluidRow(uiOutput("PTCselectedteam"))),
+               #   column(10,
+               #          fluidRow(h5("Matched Teams:")),
+               #          fluidRow(
+               #            column(1,
+               #                   uiOutput("PTC_team1")),
+               #            column(1,
+               #                   uiOutput("PTC_team2")),
+               #            column(1,
+               #                   uiOutput("PTC_team3")),
+               #            column(1,
+               #                   uiOutput("PTC_team3")),
+               #            column(1,
+               #                   uiOutput("PTC_team4")),
+               #            column(1,
+               #                   uiOutput("PTC_team5"))))),
+               # br(),
+               sidebarLayout(
                  sidebarPanel(width = 3,
                               selectInput("PTC_team", "Team:",
                                           choices = list(
@@ -96,12 +96,16 @@ ui <- (
                            tabsetPanel(
                              tabPanel("Points Per Possession",
                                       h3("Points Per Possession"),
-                                      plotlyOutput("PTC_PPPplot"),
+                                      plotlyOutput("PTC_PPPplot",
+                                                   height = "400px",
+                                                   width = "500px"),
                                       hr(),
                                       reactableOutput("PTC_PPPtable")),
                              tabPanel("Playtype Percentile",
                                       h3("Playtype Percentile"),
-                                      plotlyOutput("PTC_PERCplot"),
+                                      plotlyOutput("PTC_PERCplot",
+                                                   height = "400px",
+                                                   width = "500px"),
                                       hr(),
                                       reactableOutput("PTC_PERCtable")),
                              tabPanel("Efficiency (PPP) Data",
@@ -111,7 +115,7 @@ ui <- (
                              tabPanel("Percentile Data",
                                       h3("Percentile Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
-                                      reactableOutput("PTC_PERCtable2"))))))#,
+                                      reactableOutput("PTC_PERCtable2"))))))
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       # tabPanel("Multiple Team Comparisons",
