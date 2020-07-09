@@ -147,16 +147,30 @@ server <- function(input,output,session){
 
   # KNN Data - Eff
   PTC_KNNeff = reactive({
-    KNNeff = PTCallEff() %>%
-      select(8:17)
-    KNNeff
+    if (input$PTC_offdef == "offense") {
+      
+      KNNeff = PTCallEff() %>%
+        select(8:17)
+      KNNeff
+    } else {
+      KNNeff = PTCallEff() %>%
+        select(9:17)
+      KNNeff
+    }
   })
 
   # KNN Data - Freq
   PTC_KNNperc = reactive({
-    KNNperc = PTCallPerc() %>%
-      select(8:17)
-    KNNperc
+    if (input$PTC_offdef == "offense") {
+      
+      KNNeff = PTCallPerc() %>%
+        select(8:17)
+      KNNeff
+    } else {
+      KNNeff = PTCallPerc() %>%
+        select(9:17)
+      KNNeff
+    }
   })
 
   # # Z-Normalization Eff
@@ -183,27 +197,41 @@ server <- function(input,output,session){
   PTC_match_e = reactive({
     allmatch_e = PTCallEff()[PTC_KNNmatch_e(),]
     selteam_e = allmatch_e[1,]
-    othermatch_e = allmatch_e[-1,] %>%
-      arrange(TeamCode)
+    othermatch_e = allmatch_e[-1,]
     combine_e = rbind(selteam_e, othermatch_e)
   })
 
   PTC_match_p = reactive({
     allmatch_p = PTCallPerc()[PTC_KNNmatch_p(),]
     selteam_p = allmatch_p[1,]
-    othermatch_p = allmatch_p[-1,] %>%
-      arrange(TeamCode)
+    othermatch_p = allmatch_p[-1,]
     combine_p = rbind(selteam_p, othermatch_p)
   })
 
   PTC_PPPdata = reactive({
-    PTC_match_e() %>%
-    select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_match_e() %>%
+        select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+      
+    } else{
+      
+      PTC_match_e() %>%
+        select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    }
   })
   
   PTC_PERCdata = reactive({
-    PTC_match_p() %>%
-      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_match_p() %>%
+        select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+      
+    } else{
+      
+      PTC_match_p() %>%
+        select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    }
   })
   
   
@@ -213,79 +241,193 @@ server <- function(input,output,session){
     validate(
       need(dim(PTCothereff())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
     )
-
-    PTC_effplot = plot_ly(type = "scatterpolar",
-                          mode = "closest",
-                          fill = "toself") %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[1,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        name = PTC_match_e()[1,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[2,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_e()[2,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[3,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_e()[3,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[4,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_e()[4,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[5,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_e()[5,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PPPdata()[6,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_e()[6,1]
-      ) %>%
-      layout(
-        polar = list(
-          radialaxis = list(
-            visible = T,
-            range = c(0,2))),
-        showlegend = TRUE)
-    PTC_effplot
+    
+    #Assigning Team Names for Colors
+    PTC_t1e = as.character(PTC_match_e()[1,1])
+    PTC_t2e = as.character(PTC_match_e()[2,1])
+    PTC_t3e = as.character(PTC_match_e()[3,1])
+    PTC_t4e = as.character(PTC_match_e()[4,1])
+    PTC_t5e = as.character(PTC_match_e()[5,1])
+    PTC_t6e = as.character(PTC_match_e()[6,1])
+    
+    
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_effplot = plot_ly(type = "scatterpolar",
+                            mode = "closest",
+                            fill = "toself",
+                            colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[1,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_e()[1,2],
+          marker = list(color = color_map[PTC_t1e]),
+          fillcolor = toRGB(color_map[PTC_t1e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[2,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[2,2],
+          marker = list(color = color_map[PTC_t2e]),
+          fillcolor = toRGB(color_map[PTC_t2e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[3,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[3,2],
+          marker = list(color = color_map[PTC_t3e]),
+          fillcolor = toRGB(color_map[PTC_t3e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[4,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[4,2],
+          marker = list(color = color_map[PTC_t4e]),
+          fillcolor = toRGB(color_map[PTC_t4e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[5,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[5,2],
+          marker = list(color = color_map[PTC_t5e]),
+          fillcolor = toRGB(color_map[PTC_t5e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[6,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[6,2],
+          marker = list(color = color_map[PTC_t6e]),
+          fillcolor = toRGB(color_map[PTC_t6e], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,2))),
+          showlegend = TRUE)
+      PTC_effplot
+      
+    } else {
+      PTC_effplot = plot_ly(type = "scatterpolar",
+                            mode = "closest",
+                            fill = "toself",
+                            colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[1,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_e()[1,2],
+          marker = list(color = color_map[PTC_t1e]),
+          fillcolor = toRGB(color_map[PTC_t1e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[2,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[2,2],
+          marker = list(color = color_map[PTC_t2e]),
+          fillcolor = toRGB(color_map[PTC_t2e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[3,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[3,2],
+          marker = list(color = color_map[PTC_t3e]),
+          fillcolor = toRGB(color_map[PTC_t3e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[4,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[4,2],
+          marker = list(color = color_map[PTC_t4e]),
+          fillcolor = toRGB(color_map[PTC_t4e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[5,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[5,2],
+          marker = list(color = color_map[PTC_t5e]),
+          fillcolor = toRGB(color_map[PTC_t5e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PPPdata()[6,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_e()[6,2],
+          marker = list(color = color_map[PTC_t6e]),
+          fillcolor = toRGB(color_map[PTC_t6e], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,2))),
+          showlegend = TRUE)
+      PTC_effplot
+    }
   })
 
   # Eff Table
   output$PTC_PPPtable = renderReactable({
-    reactable(PTC_match_e() %>%
-                select(Team, Conf, Div, SeasonRange, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-              pagination = FALSE, striped = TRUE, searchable = FALSE,
-              defaultColDef = colDef(align = "center",
-                                     minWidth = 90),
-              columns = list(
-                Div = colDef(name = "Division"),
-                SeasonRange = colDef(name = "Season")
-              ),
-              showSortIcon = FALSE,
-              highlight = TRUE)
+    if (input$PTC_offdef == "offense") {
+      
+      reactable(PTC_match_e() %>%
+                  select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE) 
+      
+    } else {
+      
+      reactable(PTC_match_e() %>%
+                  select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE)
+    }
   })
 
   # Freq Plot
@@ -293,79 +435,195 @@ server <- function(input,output,session){
     validate(
       need(dim(PTCotherperc())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
     )
+    
+    PTC_t1p = as.character(PTC_match_p()[1,1])
+    PTC_t2p = as.character(PTC_match_p()[2,1])
+    PTC_t3p = as.character(PTC_match_p()[3,1])
+    PTC_t4p = as.character(PTC_match_p()[4,1])
+    PTC_t5p = as.character(PTC_match_p()[5,1])
+    PTC_t6p = as.character(PTC_match_p()[6,1])
 
-   PTC_percplot = plot_ly(type = "scatterpolar",
-                          mode = "closest",
-                          fill = "toself") %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[1,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        name = PTC_match_p()[1,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[2,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_p()[2,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[3,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_p()[3,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[4,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_p()[4,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[5,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_p()[5,1]
-      ) %>%
-      add_trace(
-        r = as.numeric(as.matrix(PTC_PERCdata()[6,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
-        showlegend = TRUE,
-        mode = "markers",
-        visible = "legendonly",
-        name = PTC_match_p()[6,1]
-      ) %>%
-      layout(
-        polar = list(
-          radialaxis = list(
-            visible = T,
-            range = c(0,100))),
-        showlegend = TRUE)
-    PTC_percplot
+    
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_percplot = plot_ly(type = "scatterpolar",
+                             mode = "closest",
+                             fill = "toself",
+                             colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[1,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_p()[1,2],
+          marker = list(color = color_map[PTC_t1p]),
+          fillcolor = toRGB(color_map[PTC_t1p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[2,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[2,2],
+          marker = list(color = color_map[PTC_t2p]),
+          fillcolor = toRGB(color_map[PTC_t2p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[3,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[3,2],
+          marker = list(color = color_map[PTC_t3p]),
+          fillcolor = toRGB(color_map[PTC_t3p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[4,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[4,2],
+          marker = list(color = color_map[PTC_t4p]),
+          fillcolor = toRGB(color_map[PTC_t4p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[5,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[5,2],
+          marker = list(color = color_map[PTC_t5p]),
+          fillcolor = toRGB(color_map[PTC_t5p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[6,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[6,2],
+          marker = list(color = color_map[PTC_t6p]),
+          fillcolor = toRGB(color_map[PTC_t6p], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,100))),
+          showlegend = TRUE)
+      PTC_percplot
+      
+    } else {
+      
+      PTC_percplot = plot_ly(type = "scatterpolar",
+                             mode = "closest",
+                             fill = "toself",
+                             colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[1,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_p()[1,2],
+          marker = list(color = color_map[PTC_t1p]),
+          fillcolor = toRGB(color_map[PTC_t1p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[2,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[2,2],
+          marker = list(color = color_map[PTC_t2p]),
+          fillcolor = toRGB(color_map[PTC_t2p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[3,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[3,2],
+          marker = list(color = color_map[PTC_t3p]),
+          fillcolor = toRGB(color_map[PTC_t3p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[4,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[4,2],
+          marker = list(color = color_map[PTC_t4p]),
+          fillcolor = toRGB(color_map[PTC_t4p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[5,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[5,2],
+          marker = list(color = color_map[PTC_t5p]),
+          fillcolor = toRGB(color_map[PTC_t5p], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_PERCdata()[6,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_p()[6,2],
+          marker = list(color = color_map[PTC_t6p]),
+          fillcolor = toRGB(color_map[PTC_t6p], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,100))),
+          showlegend = TRUE)
+      PTC_percplot
+      
+    }
   })
 
   # Freq Table
   output$PTC_PERCtable = renderReactable({
-    reactable(PTC_match_p() %>%
-                select(Team, Conf, Div, SeasonRange, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-              pagination = FALSE, striped = TRUE, searchable = FALSE,
-              defaultColDef = colDef(align = "center",
-                                     minWidth = 90),
-              columns = list(
-                Div = colDef(name = "Division"),
-                SeasonRange = colDef(name = "Season")
-              ),
-              showSortIcon = FALSE,
-              highlight = TRUE)
+    if (input$PTC_offdef == "offense") {
+      
+      reactable(PTC_match_p() %>%
+                  select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE) 
+      
+    } else {
+      
+      reactable(PTC_match_p() %>%
+                  select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE)
+      
+    }
   })
 
   # Full Tables
@@ -377,13 +635,13 @@ server <- function(input,output,session){
 
   output$PTC_PPPtable2 = renderReactable({
     reactable(playtypeMatchEff() %>%
-                select(-TeamCode, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "Team", defaultSortOrder = "asc", filterable = TRUE,
+                select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
+              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
+                TeamCode = colDef(name = "Team"),
                 Div = colDef(name = "Division"),
-                SeasonRange = colDef(name = "Season"),
                 Conf = colDef(name = "Conference"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
@@ -401,13 +659,13 @@ server <- function(input,output,session){
 
   output$PTC_PERCtable2 = renderReactable({
     reactable(playtypeMatchPerc() %>%
-                select(-TeamCode, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "Team", defaultSortOrder = "asc", filterable = TRUE,
+                select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
+              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
+                TeamCode = colDef(name = "Team"),
                 Div = colDef(name = "Division"),
-                SeasonRange = colDef(name = "Season"),
                 Conf = colDef(name = "Conference"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
