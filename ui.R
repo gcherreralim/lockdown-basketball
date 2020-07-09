@@ -135,51 +135,41 @@ ui <- (
                                 "2019 - 2020" = sort(unique(playtypes$TeamCode[playtypes$Season == 2020]))),
                               multiple = TRUE,
                               selected = NULL,
-                              options = list(maxItems = 5))),
+                              options = list(maxItems = 5)),
+                            actionButton("MTC_reset", "Reset Teams")),
                mainPanel(width = 8,
                          fluidRow(
                            column(12,
                                   "Multiple Team Playtype Comparisons",
                                   fluidRow(
                                     column(4,
-                                           "Offensive Freq",
-                                           plotlyOutput("MTC_OffFreqPlot",
-                                                        width = 400,
-                                                        height = 350)),
+                                           "Offensive Frequency",
+                                           plotlyOutput("MTC_OffFreqPlot")),
                                     column(4,
-                                           "Offensive Points per Poss",
-                                           plotlyOutput("MTC_OffEffPlot",
-                                                        width = 400,
-                                                        height = 350)),
+                                           "Offensive Efficiency",
+                                           plotlyOutput("MTC_OffEffPlot")),
                                     column(4,
                                            "Offensive Percentile",
-                                           plotlyOutput("MTC_OffPercPlot",
-                                                        width = 400,
-                                                        height = 350))
+                                           plotlyOutput("MTC_OffPercPlot"))
                                   ))),
                          fluidRow(
                            column(12,
                                   br(),
                                   fluidRow(
                                     column(4,
-                                           "Defensive Freq",
-                                           plotlyOutput("MTC_DefFreqPlot",
-                                                        width = 400,
-                                                        height = 350)),
+                                           "Defensive Frequency",
+                                           plotlyOutput("MTC_DefFreqPlot")),
                                     column(4,
-                                           "Defensive Points per Poss",
-                                           plotlyOutput("MTC_DefEffPlot",
-                                                        width = 400,
-                                                        height = 350)),
+                                           "Defensive Efficiency",
+                                           plotlyOutput("MTC_DefEffPlot")),
                                     column(4,
                                            "Defensive Percentile",
-                                           plotlyOutput("MTC_DefPercPlot",
-                                                        width = 400,
-                                                        height = 350)))
+                                           plotlyOutput("MTC_DefPercPlot")))
                                   )),
                          hr(),
                          reactableOutput("MTC_SumTable"))
-                            ),
+                            )
+      #,
 
 
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########

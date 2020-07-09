@@ -681,11 +681,199 @@ server <- function(input,output,session){
     updateCheckboxGroupInput(session, 'PTC_conf', selected = c("West" = "West", "East" = "East"))
     updateRadioButtons(session, 'PTC_offdef', selected = "offense")
   })
+  
+  
   ############## SERVER CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ################
+  # Getting Tables
+  MTC_teams_e = reactive({
+    playtypeEff %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Order = row_number())
+  })
+  MTC_teams_f = reactive({
+    playtypeFreq %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Order = row_number())
+  })
+  MTC_teams_p = reactive({
+    playtypePerc %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Order = row_number())
+  })
+  
+  # Eff Plot - Offense
+  output$MTC_OffEffPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_e())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_oe_data = MTC_teams_e() %>%
+      filter(OffDef == "offense") %>%
+      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_oe_fulldata = MTC_teams_e() %>%
+      filter(OffDef == "offense") %>%
+      select(Team, TeamCode, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1e = as.character(MTC_oe_fulldata[1,1])
+    MTC_t2e = as.character(MTC_oe_fulldata[2,1])
+    MTC_t3e = as.character(MTC_oe_fulldata[3,1])
+    MTC_t4e = as.character(MTC_oe_fulldata[4,1])
+    MTC_t5e = as.character(MTC_oe_fulldata[5,1])
+   
+      MTC_oe_plot = plot_ly(type = "scatterpolar",
+                            mode = "markers",
+                            fill = "toself",
+                            colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(MTC_oe_data[1,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = MTC_oe_fulldata[1,2],
+          marker = list(color = color_map[MTC_t1e]),
+          fillcolor = toRGB(color_map[MTC_t1e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(MTC_oe_data[2,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = MTC_oe_fulldata[2,2],
+          marker = list(color = color_map[MTC_t2e]),
+          fillcolor = toRGB(color_map[MTC_t2e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(MTC_oe_data[3,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = MTC_oe_fulldata[3,2],
+          marker = list(color = color_map[MTC_t3e]),
+          fillcolor = toRGB(color_map[MTC_t3e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(MTC_oe_data[4,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = MTC_oe_fulldata[4,2],
+          marker = list(color = color_map[MTC_t4e]),
+          fillcolor = toRGB(color_map[MTC_t4e], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(MTC_oe_data[5,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = MTC_oe_fulldata[5,2],
+          marker = list(color = color_map[MTC_t5e]),
+          fillcolor = toRGB(color_map[MTC_t5e], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,2))),
+          showlegend = TRUE)
+      MTC_oe_plot
+  })
+  
+  # Eff Plot - Defense
+  output$MTC_DefEffPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_e())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_de_data = MTC_teams_e() %>%
+      filter(OffDef == "defense") %>%
+      select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_de_fulldata = MTC_teams_e() %>%
+      filter(OffDef == "defense") %>%
+      select(Team, TeamCode, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1de = as.character(MTC_de_fulldata[1,1])
+    MTC_t2de = as.character(MTC_de_fulldata[2,1])
+    MTC_t3de = as.character(MTC_de_fulldata[3,1])
+    MTC_t4de = as.character(MTC_de_fulldata[4,1])
+    MTC_t5de = as.character(MTC_de_fulldata[5,1])
+    
+    MTC_de_plot = plot_ly(type = "scatterpolar",
+                          mode = "markers",
+                          fill = "toself",
+                          colors = color_map) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_de_data[1,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        name = MTC_de_fulldata[1,2],
+        marker = list(color = color_map[MTC_t1de]),
+        fillcolor = toRGB(color_map[MTC_t1de], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_de_data[2,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_de_fulldata[2,2],
+        marker = list(color = color_map[MTC_t2de]),
+        fillcolor = toRGB(color_map[MTC_t2de], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_de_data[3,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_de_fulldata[3,2],
+        marker = list(color = color_map[MTC_t3de]),
+        fillcolor = toRGB(color_map[MTC_t3de], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_de_data[4,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_de_fulldata[4,2],
+        marker = list(color = color_map[MTC_t4de]),
+        fillcolor = toRGB(color_map[MTC_t4de], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_de_data[5,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_de_fulldata[5,2],
+        marker = list(color = color_map[MTC_t5de]),
+        fillcolor = toRGB(color_map[MTC_t5de], alpha = 0.5)
+      ) %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = T,
+            range = c(0,2))),
+        showlegend = TRUE)
+    MTC_de_plot
+  })
   
   
   
-  
+  observeEvent(input$MTC_reset,{
+    updateSelectizeInput(session, "MTC_teams", selected = "")
+  })
   
   
   ############## SERVER CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ################
