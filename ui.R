@@ -119,64 +119,69 @@ ui <- (
                              tabPanel("Percentile Data",
                                       h3("Percentile Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
-                                      reactable::reactableOutput("PTC_PERCtable2"))))))
+                                      reactable::reactableOutput("PTC_PERCtable2")))))),
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
-      # tabPanel("Multiple Team Comparisons",
-      #          sidebarPanel(width = 2,
-      #                       selectizeInput(
-      #                         inputId = "MTC_teams",
-      #                         label = "Select up to 5 teams to compare:",
-      #                         choices = fullteams$TeamCode,
-      #                         multiple = TRUE,
-      #                         selected = NULL,
-      #                         options = list(maxItems = 5))),
-      #          mainPanel(width = 8,
-      #                    fluidRow(
-      #                      column(12,
-      #                             "Multiple Team Playtype Comparisons",
-      #                             fluidRow(
-      #                               column(4,
-      #                                      "Offensive Freq",
-      #                                      plotlyOutput("MTC_OffFreqPlot",
-      #                                                   width = 400,
-      #                                                   height = 350)),
-      #                               column(4,
-      #                                      "Offensive Points per Poss",
-      #                                      plotlyOutput("MTC_OffEffPlot",
-      #                                                   width = 400,
-      #                                                   height = 350)),
-      #                               column(4,
-      #                                      "Offensive Percentile",
-      #                                      plotlyOutput("MTC_OffPercPlot",
-      #                                                   width = 400,
-      #                                                   height = 350))
-      #                             ))),
-      #                    fluidRow(
-      #                      column(12,
-      #                             br(),
-      #                             fluidRow(
-      #                               column(4,
-      #                                      "Defensive Freq",
-      #                                      plotlyOutput("MTC_DefFreqPlot",
-      #                                                   width = 400,
-      #                                                   height = 350)),
-      #                               column(4,
-      #                                      "Defensive Points per Poss",
-      #                                      plotlyOutput("MTC_DefEffPlot",
-      #                                                   width = 400,
-      #                                                   height = 350)),
-      #                               column(4,
-      #                                      "Defensive Percentile",
-      #                                      plotlyOutput("MTC_DefPercPlot",
-      #                                                   width = 400,
-      #                                                   height = 350)))
-      #                             )),
-      #                    hr(),
-      #                    reactableOutput("MTC_SumTable"))
-      #                       ),
-      # 
-      # 
+      tabPanel("Multiple Team Comparisons",
+               sidebarPanel(width = 2,
+                            selectizeInput(
+                              inputId = "MTC_teams",
+                              label = "Select up to 5 teams to compare:",
+                              choices = list(
+                                "2015 - 2016" = sort(unique(playtypes$TeamCode[playtypes$Season == 2016])),
+                                "2016 - 2017" = sort(unique(playtypes$TeamCode[playtypes$Season == 2017])),
+                                "2017 - 2018" = sort(unique(playtypes$TeamCode[playtypes$Season == 2018])),
+                                "2018 - 2019" = sort(unique(playtypes$TeamCode[playtypes$Season == 2019])),
+                                "2019 - 2020" = sort(unique(playtypes$TeamCode[playtypes$Season == 2020]))),
+                              multiple = TRUE,
+                              selected = NULL,
+                              options = list(maxItems = 5))),
+               mainPanel(width = 8,
+                         fluidRow(
+                           column(12,
+                                  "Multiple Team Playtype Comparisons",
+                                  fluidRow(
+                                    column(4,
+                                           "Offensive Freq",
+                                           plotlyOutput("MTC_OffFreqPlot",
+                                                        width = 400,
+                                                        height = 350)),
+                                    column(4,
+                                           "Offensive Points per Poss",
+                                           plotlyOutput("MTC_OffEffPlot",
+                                                        width = 400,
+                                                        height = 350)),
+                                    column(4,
+                                           "Offensive Percentile",
+                                           plotlyOutput("MTC_OffPercPlot",
+                                                        width = 400,
+                                                        height = 350))
+                                  ))),
+                         fluidRow(
+                           column(12,
+                                  br(),
+                                  fluidRow(
+                                    column(4,
+                                           "Defensive Freq",
+                                           plotlyOutput("MTC_DefFreqPlot",
+                                                        width = 400,
+                                                        height = 350)),
+                                    column(4,
+                                           "Defensive Points per Poss",
+                                           plotlyOutput("MTC_DefEffPlot",
+                                                        width = 400,
+                                                        height = 350)),
+                                    column(4,
+                                           "Defensive Percentile",
+                                           plotlyOutput("MTC_DefPercPlot",
+                                                        width = 400,
+                                                        height = 350)))
+                                  )),
+                         hr(),
+                         reactableOutput("MTC_SumTable"))
+                            ),
+
+
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
       # tabPanel("5-Year Window Analysis",
       #          h4("Select row to see additional data"),
