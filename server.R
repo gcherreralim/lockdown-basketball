@@ -320,8 +320,11 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,2))),
-          showlegend = TRUE)
+              range = c(0,1.5),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
       PTC_effplot
       
     } else {
@@ -392,8 +395,11 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,2))),
-          showlegend = TRUE)
+              range = c(0,1.5),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
       PTC_effplot
     }
   })
@@ -513,8 +519,11 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,100))),
-          showlegend = TRUE)
+              range = c(0,100),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
       PTC_percplot
       
     } else {
@@ -586,8 +595,11 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,100))),
-          showlegend = TRUE)
+              range = c(0,100),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
       PTC_percplot
       
     }
@@ -674,7 +686,36 @@ server <- function(input,output,session){
               showSortIcon = FALSE,
               highlight = TRUE)
   })
-
+  
+  output$PTC_PPPtabledownload2 <- downloadHandler(
+    filename = function() {
+      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",'efficiencymatchtable', '.csv')
+    },
+    content = function(file) {
+      PPPtabledown1 = playtypeMatchEff()
+      
+      PPPtabledown2 <- PPPtabledown1 %>% 
+        select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary)  
+      
+      write.csv(PPPtabledown2, file)
+    }
+  )
+  
+  output$PTC_PERCtabledownload2 <- downloadHandler(
+    filename = function() {
+      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",'percentilematchtable', '.csv')
+    },
+    content = function(file) {
+      PERCtabledown1 = playtypeMatchPerc()
+      
+      PERCtabledown2 <- PERCtabledown1 %>% 
+        select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary)  
+      
+      write.csv(PERCtabledown2, file)
+    }
+  )
+  
+  
   observeEvent(input$PTC_reset,{
     updateSelectInput(session, 'PTC_team', selected = "MIL")
     updateSelectInput(session, 'PTC_season', selected = "2019-2020")
@@ -725,6 +766,7 @@ server <- function(input,output,session){
    
       MTC_oe_plot = plot_ly(type = "scatterpolar",
                             mode = "markers",
+                            sort = FALSE,
                             fill = "toself",
                             colors = color_map) %>%
         add_trace(
@@ -780,8 +822,11 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,2))),
-          showlegend = TRUE)
+              range = c(0,1.5),
+              tickfont = list(size = 9)),
+            angularaxis = list(tickfont = list(size = 8))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
       MTC_oe_plot
   })
   
@@ -809,11 +854,12 @@ server <- function(input,output,session){
     
     MTC_de_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
+                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
         r = as.numeric(as.matrix(MTC_de_data[1,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         name = MTC_de_fulldata[1,2],
@@ -822,7 +868,7 @@ server <- function(input,output,session){
       ) %>%
       add_trace(
         r = as.numeric(as.matrix(MTC_de_data[2,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         visible = "legendonly",
@@ -832,7 +878,7 @@ server <- function(input,output,session){
       ) %>%
       add_trace(
         r = as.numeric(as.matrix(MTC_de_data[3,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         visible = "legendonly",
@@ -842,7 +888,7 @@ server <- function(input,output,session){
       ) %>%
       add_trace(
         r = as.numeric(as.matrix(MTC_de_data[4,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         visible = "legendonly",
@@ -852,7 +898,7 @@ server <- function(input,output,session){
       ) %>%
       add_trace(
         r = as.numeric(as.matrix(MTC_de_data[5,])),
-        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
         showlegend = TRUE,
         mode = "markers",
         visible = "legendonly",
@@ -864,12 +910,365 @@ server <- function(input,output,session){
         polar = list(
           radialaxis = list(
             visible = T,
-            range = c(0,2))),
-        showlegend = TRUE)
+            range = c(0,1.5),
+            tickfont = list(size = 9)),
+          angularaxis = list(tickfont = list(size = 8))),
+        showlegend = TRUE,
+        legend = list(font = list(size = 10)))
     MTC_de_plot
   })
   
+  # Freq Plot - Offense
+  output$MTC_OffFreqPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_f())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_of_data = MTC_teams_f() %>%
+      filter(OffDef == "offense") %>%
+      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_of_fulldata = MTC_teams_f() %>%
+      filter(OffDef == "offense") %>%
+      select(Team, TeamCode, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1f = as.character(MTC_of_fulldata[1,1])
+    MTC_t2f = as.character(MTC_of_fulldata[2,1])
+    MTC_t3f = as.character(MTC_of_fulldata[3,1])
+    MTC_t4f = as.character(MTC_of_fulldata[4,1])
+    MTC_t5f = as.character(MTC_of_fulldata[5,1])
+    
+    MTC_of_plot = plot_ly(type = "scatterpolar",
+                          mode = "markers",
+                          sort = FALSE,
+                          fill = "toself",
+                          colors = color_map) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_of_data[1,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        name = MTC_of_fulldata[1,2],
+        marker = list(color = color_map[MTC_t1f]),
+        fillcolor = toRGB(color_map[MTC_t1f], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_of_data[2,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_of_fulldata[2,2],
+        marker = list(color = color_map[MTC_t2f]),
+        fillcolor = toRGB(color_map[MTC_t2f], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_of_data[3,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_of_fulldata[3,2],
+        marker = list(color = color_map[MTC_t3f]),
+        fillcolor = toRGB(color_map[MTC_t3f], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_of_data[4,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_of_fulldata[4,2],
+        marker = list(color = color_map[MTC_t4f]),
+        fillcolor = toRGB(color_map[MTC_t4f], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_of_data[5,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_of_fulldata[5,2],
+        marker = list(color = color_map[MTC_t5f]),
+        fillcolor = toRGB(color_map[MTC_t5f], alpha = 0.5)
+      ) %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = T,
+            range = c(0,35),
+            tickfont = list(size = 9)),
+          angularaxis = list(tickfont = list(size = 8))),
+        showlegend = TRUE,
+        legend = list(font = list(size = 10)))
+    MTC_of_plot
+  })
   
+  # Freq Plot - Defense
+  output$MTC_DefFreqPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_f())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_df_data = MTC_teams_f() %>%
+      filter(OffDef == "defense") %>%
+      select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_df_fulldata = MTC_teams_f() %>%
+      filter(OffDef == "defense") %>%
+      select(Team, TeamCode, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1df = as.character(MTC_df_fulldata[1,1])
+    MTC_t2df = as.character(MTC_df_fulldata[2,1])
+    MTC_t3df = as.character(MTC_df_fulldata[3,1])
+    MTC_t4df = as.character(MTC_df_fulldata[4,1])
+    MTC_t5df = as.character(MTC_df_fulldata[5,1])
+    
+    MTC_df_plot = plot_ly(type = "scatterpolar",
+                          mode = "markers",
+                          sort = FALSE,
+                          fill = "toself",
+                          colors = color_map) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_df_data[1,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        name = MTC_df_fulldata[1,2],
+        marker = list(color = color_map[MTC_t1df]),
+        fillcolor = toRGB(color_map[MTC_t1df], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_df_data[2,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_df_fulldata[2,2],
+        marker = list(color = color_map[MTC_t2df]),
+        fillcolor = toRGB(color_map[MTC_t2df], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_df_data[3,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_df_fulldata[3,2],
+        marker = list(color = color_map[MTC_t3df]),
+        fillcolor = toRGB(color_map[MTC_t3df], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_df_data[4,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_df_fulldata[4,2],
+        marker = list(color = color_map[MTC_t4df]),
+        fillcolor = toRGB(color_map[MTC_t4df], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_df_data[5,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_df_fulldata[5,2],
+        marker = list(color = color_map[MTC_t5df]),
+        fillcolor = toRGB(color_map[MTC_t5df], alpha = 0.5)
+      ) %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = T,
+            range = c(0,35),
+            tickfont = list(size = 9)),
+          angularaxis = list(tickfont = list(size = 8))),
+        showlegend = TRUE,
+        legend = list(font = list(size = 10)))
+    MTC_df_plot
+  })
+  
+  # Perc Plot - Offense
+  output$MTC_OffPercPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_p())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_op_data = MTC_teams_p() %>%
+      filter(OffDef == "offense") %>%
+      select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_op_fulldata = MTC_teams_p() %>%
+      filter(OffDef == "offense") %>%
+      select(Team, TeamCode, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1p = as.character(MTC_op_fulldata[1,1])
+    MTC_t2p = as.character(MTC_op_fulldata[2,1])
+    MTC_t3p = as.character(MTC_op_fulldata[3,1])
+    MTC_t4p = as.character(MTC_op_fulldata[4,1])
+    MTC_t5p = as.character(MTC_op_fulldata[5,1])
+    
+    MTC_op_plot = plot_ly(type = "scatterpolar",
+                          mode = "markers",
+                          sort = FALSE,
+                          fill = "toself",
+                          colors = color_map) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_op_data[1,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        name = MTC_op_fulldata[1,2],
+        marker = list(color = color_map[MTC_t1p]),
+        fillcolor = toRGB(color_map[MTC_t1p], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_op_data[2,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_op_fulldata[2,2],
+        marker = list(color = color_map[MTC_t2p]),
+        fillcolor = toRGB(color_map[MTC_t2p], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_op_data[3,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_op_fulldata[3,2],
+        marker = list(color = color_map[MTC_t3p]),
+        fillcolor = toRGB(color_map[MTC_t3p], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_op_data[4,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_op_fulldata[4,2],
+        marker = list(color = color_map[MTC_t4p]),
+        fillcolor = toRGB(color_map[MTC_t4p], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_op_data[5,])),
+        theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_op_fulldata[5,2],
+        marker = list(color = color_map[MTC_t5p]),
+        fillcolor = toRGB(color_map[MTC_t5p], alpha = 0.5)
+      ) %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = T,
+            range = c(0,100),
+            tickfont = list(size = 9)),
+          angularaxis = list(tickfont = list(size = 8))),
+        showlegend = TRUE,
+        legend = list(font = list(size = 10)))
+    MTC_op_plot
+  })
+  
+  # Freq Plot - Defense
+  output$MTC_DefPercPlot = renderPlotly({
+    
+    validate(
+      need(dim(MTC_teams_p())[1]>=1, "Choose at least 1 team to display graphs.")
+    )
+    
+    MTC_dp_data = MTC_teams_p() %>%
+      filter(OffDef == "defense") %>%
+      select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    MTC_dp_fulldata = MTC_teams_p() %>%
+      filter(OffDef == "defense") %>%
+      select(Team, TeamCode, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    #Assigning Team Names for Colors
+    MTC_t1dp = as.character(MTC_dp_fulldata[1,1])
+    MTC_t2dp = as.character(MTC_dp_fulldata[2,1])
+    MTC_t3dp = as.character(MTC_dp_fulldata[3,1])
+    MTC_t4dp = as.character(MTC_dp_fulldata[4,1])
+    MTC_t5dp = as.character(MTC_dp_fulldata[5,1])
+    
+    MTC_dp_plot = plot_ly(type = "scatterpolar",
+                          mode = "markers",
+                          sort = FALSE,
+                          fill = "toself",
+                          colors = color_map) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_dp_data[1,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        name = MTC_dp_fulldata[1,2],
+        marker = list(color = color_map[MTC_t1dp]),
+        fillcolor = toRGB(color_map[MTC_t1dp], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_dp_data[2,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_dp_fulldata[2,2],
+        marker = list(color = color_map[MTC_t2dp]),
+        fillcolor = toRGB(color_map[MTC_t2dp], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_dp_data[3,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_dp_fulldata[3,2],
+        marker = list(color = color_map[MTC_t3dp]),
+        fillcolor = toRGB(color_map[MTC_t3dp], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_dp_data[4,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_dp_fulldata[4,2],
+        marker = list(color = color_map[MTC_t4dp]),
+        fillcolor = toRGB(color_map[MTC_t4dp], alpha = 0.5)
+      ) %>%
+      add_trace(
+        r = as.numeric(as.matrix(MTC_dp_data[5,])),
+        theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+        showlegend = TRUE,
+        mode = "markers",
+        visible = "legendonly",
+        name = MTC_dp_fulldata[5,2],
+        marker = list(color = color_map[MTC_t5dp]),
+        fillcolor = toRGB(color_map[MTC_t5dp], alpha = 0.5)
+      ) %>%
+      layout(
+        polar = list(
+          radialaxis = list(
+            visible = T,
+            range = c(0,100),
+            tickfont = list(size = 9)),
+          angularaxis = list(tickfont = list(size = 8))),
+        showlegend = TRUE,
+        legend = list(font = list(size = 10)))
+    MTC_dp_plot
+  })
   
   observeEvent(input$MTC_reset,{
     updateSelectizeInput(session, "MTC_teams", selected = "")

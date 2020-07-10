@@ -9,7 +9,7 @@ ui <- (
     
     
     ############# THEME ##############
-    theme = shinytheme("yeti"),
+    theme = NULL,
     navbarPage(
       selected = "Home",
       title = "NBA TEAM COMPARISONS",
@@ -101,24 +101,26 @@ ui <- (
                              tabPanel("Points Per Possession",
                                       h3("Points Per Possession"),
                                       plotly::plotlyOutput("PTC_PPPplot",
-                                                   height = "400px",
-                                                   width = "500px"),
+                                                   height = "500px",
+                                                   width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PPPtable")),
                              tabPanel("Playtype Percentile",
                                       h3("Playtype Percentile"),
                                       plotly::plotlyOutput("PTC_PERCplot",
-                                                   height = "400px",
-                                                   width = "500px"),
+                                                   height = "500px",
+                                                   width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PERCtable")),
                              tabPanel("Efficiency (PPP) Data",
                                       h3("Efficiency Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Points Per Possession' tab."),
+                                      downloadButton('PTC_PPPtabledownload2',"Download the data"),
                                       reactable::reactableOutput("PTC_PPPtable2")),
                              tabPanel("Percentile Data",
                                       h3("Percentile Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
+                                      downloadButton('PTC_PERCtabledownload2',"Download the data"),
                                       reactable::reactableOutput("PTC_PERCtable2")))))),
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
@@ -140,34 +142,35 @@ ui <- (
                mainPanel(width = 8,
                          fluidRow(
                            column(12,
-                                  "Multiple Team Playtype Comparisons",
+                                  h3("Multiple Team Playtype Comparisons"),
                                   fluidRow(
                                     column(4,
                                            "Offensive Frequency",
-                                           plotlyOutput("MTC_OffFreqPlot")),
+                                           plotly::plotlyOutput("MTC_OffFreqPlot")),
                                     column(4,
                                            "Offensive Efficiency",
-                                           plotlyOutput("MTC_OffEffPlot")),
+                                           plotly::plotlyOutput("MTC_OffEffPlot")),
                                     column(4,
                                            "Offensive Percentile",
-                                           plotlyOutput("MTC_OffPercPlot"))
+                                           plotly::plotlyOutput("MTC_OffPercPlot"))
                                   ))),
                          fluidRow(
                            column(12,
-                                  br(),
+                                  shiny::br(),
                                   fluidRow(
                                     column(4,
                                            "Defensive Frequency",
-                                           plotlyOutput("MTC_DefFreqPlot")),
+                                           plotly::plotlyOutput("MTC_DefFreqPlot")),
                                     column(4,
                                            "Defensive Efficiency",
-                                           plotlyOutput("MTC_DefEffPlot")),
+                                           plotly::plotlyOutput("MTC_DefEffPlot")),
                                     column(4,
                                            "Defensive Percentile",
                                            plotlyOutput("MTC_DefPercPlot")))
                                   )),
-                         hr(),
-                         reactableOutput("MTC_SumTable"))
+                         h5("Double click a team name in each graph's legend to display all teams. Note that graphs will overlap."),
+                         shiny::hr(),
+                         reactable::reactableOutput("MTC_SumTable"))
                             )
       #,
 

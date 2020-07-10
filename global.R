@@ -1,16 +1,42 @@
 ### USED PACKAGES
-pack = c("shiny", "shinythemes", "ggplot2", "magrittr", "DT", "reactable",
-         "shinyWidgets", "tidyverse", "httr", "stringr", "lubridate", "plotly",
+pack = c("shiny", "ggplot2", "magrittr", "reactable","tidyverse", "httr", "stringr", "lubridate", "plotly",
          "shinydashboard", "caret", "formattable", "data.table", "highcharter",
-         "RColorBrewer", "htmltools", "shinyjs", "leaflet", "reshape2", "class", 
+         "htmltools", "shinyjs", "leaflet", "reshape2", "class", 
          "FNN", "teamcolors", "ggrepel", "extrafont", "showtext","scales")
 
 # VERIFY PACKAGES
-package.check <- lapply(pack, FUN = function(x) {
-  if (!require(x, character.only = TRUE)) {
-    install.packages(x, dependencies = TRUE)
-  }
-})
+# package.check <- lapply(pack, FUN = function(x) {
+#   if (!require(x, character.only = TRUE)) {
+#     install.packages(x, dependencies = TRUE)
+#   }
+# })
+
+library(shiny)
+library(ggplot2)
+library(magrittr)
+library(reactable)
+library(tidyverse)
+library(httr)
+library(stringr)
+library(lubridate)
+library(plotly)
+library(shinydashboard)
+library(caret)
+library(formattable)
+library(data.table)
+library(highcharter)
+library(htmltools)
+library(shinyjs)
+library(leaflet)
+library(reshape2)
+library(class)
+library(FNN)
+library(teamcolors)
+library(ggrepel)
+library(extrafont)
+library(showtext)
+library(scales)
+
 
 #Loading Data
 fullteams = readr::read_csv("fullteams2.csv")
@@ -88,7 +114,7 @@ playtypes = playtypes %>%
 color_map = c("ATL" = "#E13A3E",
               "BOS" = "#008348",
               "BKN" = "#061922",
-              "CHA" = "#1d1160",
+              "CHA" = "#008ca8",
               "CHI" = "#ce1141",
               "CLE" = "#860038",
               "DAL" = "#007dc5",
@@ -104,7 +130,7 @@ color_map = c("ATL" = "#E13A3E",
               "MIL" = "#00471b",
               "MIN" = "#005083",
               "NOP" = "#002b5c",
-              "NYK" = "#006bb6",
+              "NYK" = "#f58426",
               "OKC" = "#007dc3",
               "ORL" = "#007dc5",
               "PHI" = "#ed174c",
@@ -114,4 +140,4 @@ color_map = c("ATL" = "#E13A3E",
               "SAS" = "#bac3c9",
               "TOR" = "#ce1141",
               "UTA" = "#002b5c",
-              "WAS" = "#002b5c")
+              "WAS" = "#e31837")
