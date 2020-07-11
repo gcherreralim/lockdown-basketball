@@ -84,10 +84,12 @@ server <- function(input,output,session){
                 SeasonRange = colDef(name = "Season"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
-                WinPerc = colDef(name = "Pct"),
+                WinPerc = colDef(name = "W%"),
                 EstWinPerc = colDef(show = FALSE),
                 ProjWinPerc = colDef(show = FALSE),
                 AchLevel = colDef(show = FALSE),
+                SchedAdjRTG = colDef(name = "SchedARtg"),
+                Consistency = colDef(name = "Cons"),
                 AvgPTDiff = colDef(name = "Diff"),
                 EFFDiff = colDef(name = "eDiff"),
                 ASTPerc = colDef(name = "AST%"),
@@ -95,7 +97,7 @@ server <- function(input,output,session){
                 DRebPerc = colDef(name = "DREB%"),
                 RebPerc = colDef(name = "REB%"),
                 TOVPerc = colDef(name = "TOV%"),
-                eFGPercSeason = colDef(name = "eFG"),
+                eFGPercSeason = colDef(name = "eFG%"),
                 TSPerc = colDef(name = "TS%"),
                 Playoff = colDef(show = FALSE),
                 name = colDef(show = FALSE),
@@ -514,7 +516,7 @@ server <- function(input,output,session){
                   rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
                 ),
                 defaultColDef = colDef(align = "center",
-                                       minWidth = 90),
+                                       minWidth = 60),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
                   Div = colDef(name = "Division"),
@@ -534,7 +536,7 @@ server <- function(input,output,session){
                   rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
                 ),
                 defaultColDef = colDef(align = "center",
-                                       minWidth = 90),
+                                       minWidth = 60),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
                   Div = colDef(name = "Division"),
@@ -705,12 +707,12 @@ server <- function(input,output,session){
           polar = list(
             radialaxis = list(
               visible = T,
-              range = c(0,1.5),
+              range = c(0,35),
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
           legend = list(font = list(size = 10)))
-      PTC_effplot
+      PTC_freqplot
     }
   })
   
@@ -983,7 +985,8 @@ server <- function(input,output,session){
   output$PTC_PPPtable2 = renderReactable({
     reactable(playtypeMatchEff() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50), 
+              striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
               selection = "single", onClick = "select",
               theme = reactableTheme(
                 rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
@@ -1012,7 +1015,7 @@ server <- function(input,output,session){
   output$PTC_FREQtable2 = renderReactable({
     reactable(playtypeMatchFreq() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50), striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
               selection = "single", onClick = "select",
               theme = reactableTheme(
                 rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
@@ -1041,7 +1044,8 @@ server <- function(input,output,session){
   output$PTC_PERCtable2 = renderReactable({
     reactable(playtypeMatchPerc() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50),
+              striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
               selection = "single", onClick = "select",
               theme = reactableTheme(
                 rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
@@ -1735,6 +1739,25 @@ server <- function(input,output,session){
                 primary = colDef(show = FALSE),
                 .selection = colDef(show = FALSE)
                 ))
+  })
+  
+  selected = reactive({
+    getReactableState("WA_Table", "selected")
+  })
+  
+  output$WA_selected = renderPrint({
+    print(genteamsWA_A[selected(),]$TeamCode)
+  })
+  
+  output$WA_trialplot = renderPlot({
+    A1set = genteamsWA_A %>%
+      filter(TeamCode == genteamsWA_A[selected(),]$TeamCode) %>%
+      pivot_longer(cols = c(5,7,9,11,13,15,17,19,21), names_to = "Metrics", values_to = "AmountAboveSeasonAverage") %>%
+      select(1:4,tail(names(.),2)) %>%
+      mutate(posneg = ifelse(AmountAboveSeasonAverage < 0, "neg", "pos"))
+    
+    ggplot(A1set, aes(x = Metrics, Y = AmountAboveSeasonAverage)) +
+      
   })
   
 }

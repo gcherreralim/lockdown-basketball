@@ -4,6 +4,7 @@ pack = c("shiny", "ggplot2", "magrittr", "reactable","tidyverse", "httr", "strin
          "htmltools", "shinyjs", "leaflet", "reshape2", "class", 
          "FNN", "teamcolors", "ggrepel", "extrafont", "showtext","scales")
 
+options(scipen = 999)
 # VERIFY PACKAGES
 # package.check <- lapply(pack, FUN = function(x) {
 #   if (!require(x, character.only = TRUE)) {
@@ -57,11 +58,10 @@ colnamesNew = c("Team", "TeamCode", "Conf", "Div", "Season", "SeasonRange", "Win
                 "RebPerc", "TOVPerc", "eFGPercSeason", "TSPerc", "PIE", "Playoff")
 
 colnames(fullteams) = colnamesNew
-#fullteams = fullteams %>%
-#  mutate(WinPerc = label_percent(accuracy = 0.01)(WinPerc))
 fullteams = fullteams %>%
   mutate(SeasonRange = as.factor(SeasonRange))
 
+# Final Large Datasets
 playtypes = fullteams[c(1:9,13:29,54)]
 genteams = fullteams[c(1:12,30:54)]
 
@@ -88,6 +88,7 @@ colnames(playtypeFreq) = colnamesPT
 colnames(playtypeEff) = colnamesPT
 colnames(playtypePerc) = colnamesPT
 
+# Color Scheme
 nbacolors = teamcolors %>%
   filter(league == "nba") %>%
   select(name, primary, secondary)
@@ -141,3 +142,61 @@ color_map = c("ATL" = "#E13A3E",
               "TOR" = "#ce1141",
               "UTA" = "#002b5c",
               "WAS" = "#e31837")
+
+# For Season/Window Amount Diff
+genteamsWA_A = genteams %>%
+  select(TeamCode, Team, Season, SeasonRange, Pace, PPG, OppPPG, oEFF, dEFF, EFFDiff, OffRtg, DefRtg, NetRtg)
+
+genteams_g1ave1 = genteamsWA_A %>%
+  group_by(Season) %>%
+  dplyr::summarize(PaceAve1 = mean(Pace),
+                   PPGAve1 = mean(PPG),
+                   OppPPGAve1 = mean(OppPPG),
+                   oEFFAve1 = mean(oEFF),
+                   dEFFAve1 = mean(dEFF),
+                   EFFDiffAve1 = mean(EFFDiff),
+                   OffRtgAve1 = mean(OffRtg),
+                   DefRtgAve1 = mean(DefRtg),
+                   NetRtgAve1 = mean(NetRtg)
+  )
+
+genteams_g1ave5 = genteamsWA_A %>%
+  dplyr::mutate(PaceAve5 = mean(Pace),
+                PPGAve5 = mean(PPG),
+                OppPPGAve5 = mean(OppPPG),
+                oEFFAve5 = mean(oEFF),
+                dEFFAve5 = mean(dEFF),
+                EFFDiffAve5 = mean(EFFDiff),
+                OffRtgAve5 = mean(OffRtg),
+                DefRtgAve5 = mean(DefRtg),
+                NetRtgAve5 = mean(NetRtg)
+  ) %>%
+  select(Season, PaceAve5, PPGAve5, OppPPGAve5, oEFFAve5, dEFFAve5, EFFDiffAve5, OffRtgAve5, DefRtgAve5, NetRtgAve5)
+
+genteamsWA_A = genteamsWA_A %>%
+  left_join(genteams_g1ave1, by = "Season") %>%
+  left_join(genteams_g1ave5, by = "Season") %>%
+  distinct() %>%
+  mutate(PaceDiff1 = ifelse(Pace > PaceAve1, Pace-PaceAve1, -(PaceAve1-Pace)),
+         PaceDiff5 = ifelse(Pace > PaceAve5, Pace-PaceAve5, -(PaceAve5-Pace)),
+         PPGDiff1 = ifelse(PPG > PPGAve1, PPG-PPGAve1, -(PPGAve1-PPG)),
+         PPGDiff5 = ifelse(PPG > PPGAve5, PPG-PPGAve5, -(PPGAve5-PPG)),
+         OppPPGDiff1 = ifelse(OppPPG > OppPPGAve1, OppPPG-OppPPGAve1, -(OppPPGAve1-OppPPG)),
+         OppPPGDiff5 = ifelse(OppPPG > OppPPGAve5, OppPPG-OppPPGAve5, -(OppPPGAve5-OppPPG)),
+         oEFFDiff1 = ifelse(oEFF > oEFFAve1, oEFF-oEFFAve1, -(oEFFAve1-oEFF)),
+         oEFFDiff5 = ifelse(oEFF > oEFFAve5, oEFF-oEFFAve5, -(oEFFAve5-oEFF)),
+         dEFFDiff1 = ifelse(dEFF > dEFFAve1, dEFF-dEFFAve1, -(dEFFAve1-dEFF)),
+         dEFFDiff5 = ifelse(dEFF > dEFFAve5, dEFF-dEFFAve5, -(dEFFAve5-dEFF)),
+         EFFDiffDiff1 = ifelse(EFFDiff > EFFDiffAve1, EFFDiff-EFFDiffAve1, -(EFFDiffAve1-EFFDiff)),
+         EFFDiffDiff5 = ifelse(EFFDiff > EFFDiffAve5, EFFDiff-EFFDiffAve5, -(EFFDiffAve5-EFFDiff)),
+         OffRtgDiff1 = ifelse(OffRtg > OffRtgAve1, OffRtg-OffRtgAve1, -(OffRtgAve1-OffRtg)),
+         OffRtgDiff5 = ifelse(OffRtg > OffRtgAve5, OffRtg-OffRtgAve5, -(OffRtgAve5-OffRtg)),
+         DefRtgDiff1 = ifelse(DefRtg > DefRtgAve1, DefRtg-DefRtgAve1, -(DefRtgAve1-DefRtg)),
+         DefRtgDiff5 = ifelse(DefRtg > DefRtgAve5, DefRtg-DefRtgAve5, -(DefRtgAve5-DefRtg)),
+         NetRtgDiff1 = ifelse(NetRtg > NetRtgAve1, NetRtg-NetRtgAve1, -(NetRtgAve1-NetRtg)),
+         NetRtgDiff5 = ifelse(NetRtg > NetRtgAve5, NetRtg-NetRtgAve5, -(NetRtgAve5-NetRtg))
+  ) %>%
+  select(c(1:4),tail(names(.), 18))
+
+
+# For Season/Window Percent Diff

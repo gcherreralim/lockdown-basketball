@@ -17,18 +17,19 @@ ui <- (
                       background-color: #17408B;
                       width: 100vw;
                       margin-left: -0.78vw;
-                      letter-spacing: 3px;
                       font-weight: 500;
                       font-family: "Raleway", sans-serif;
                     }
                     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover{
                       color: #FFF;
                       text-transform: uppercase;
+                      letter-spacing: 3px;
                       font-size: 12px;
                     }
                     .navbar-default .navbar-nav>li>a {
                       font-size: 10px;
                       color: #FFF;
+                      letter-spacing: 1.5px;
                       transition: all 200ms ease-in-out;
                     }
                     .navbar-default .navbar-nav>li>a:hover{
@@ -38,6 +39,8 @@ ui <- (
                     .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
                       background-color: #C9082A;
                       color: #FFF;
+                      text-transform: uppercase;
+                      font-weight: 600;
                     }
                     .btn{
                       background-color: #17408B;
@@ -63,6 +66,34 @@ ui <- (
                     }
                     .control-label{
                       font-weight: 400;
+                    }
+                    
+                    /* REACTABLE */
+                    .reactable > div > div.rt-table > div.rt-thead.-header > div {
+                      background-color: #17408B;
+                    }
+                    .reactable > div > div.rt-table > div.rt-thead.-header > div > div.rt-align-center{
+                      padding: 8px;
+                      border-bottom-width: 1px;
+                      background-color: #17408B;
+                      text-transform: uppercase;
+                      font-size: 11px;
+                      color: #FFF;
+                      transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)
+                    }
+                    .reactable > div > div.rt-table > div.rt-thead.-header > div > div.rt-align-center:hover {
+                      background-color: #C9082A;
+                      color: #FFF;
+                    }
+                    .reactable > div > div.rt-table > div.rt-thead.-header > div > div.rt-align-center[aria-sort="ascending"]{
+                      background-color: #C9082A;
+                      color: #FFF;
+                      box-shadow: inset 0 10px 0 -6px #EDB439;
+                    }
+                    .reactable > div > div.rt-table > div.rt-thead.-header > div > div.rt-align-center[aria-sort="descending"]{
+                      background-color: #C9082A;
+                      color: #FFF;
+                      box-shadow: inset 0 -10px 0 -6px #EDB439;
                     }
                     ')),
     
@@ -137,7 +168,8 @@ ui <- (
                # br(),
                sidebarLayout(
                  sidebarPanel(width = 2,
-                              h5("Select a team:"),
+                              h5("SELECT A TEAM:"),
+                              hr(),
                               selectInput("PTC_team", "Team:",
                                           choices = list(
                                             "East" = sort(unique(playtypes$Team[playtypes$Conf == "East"])),
@@ -149,14 +181,17 @@ ui <- (
                                           unique(playtypes$SeasonRange),
                                           selectize = TRUE,
                                           selected = "2019-2020"),
-                              h5("Matching parameters:"),
+                              hr(),
+                              h5("MATCHING PARAMETERS:"),
+                              hr(),
                               checkboxGroupInput("PTC_conf", "Conference:",
                                                  choices = unique(playtypes$Conf),
                                                  selected = c("West" = "West",
                                                               "East" = "East"),
                                                  inline = TRUE),
-                              radioButtons("PTC_offdef", "Possession Type",
-                                           choices = unique(playtypes$OffDef),
+                              radioButtons("PTC_offdef", "Possession Type:",
+                                           choices = c("Offense" = "offense",
+                                                       "Defense" = "defense"),
                                            selected = "offense",
                                            inline = TRUE),
                               actionButton("PTC_reset", "Reset")),
@@ -184,20 +219,20 @@ ui <- (
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PERCtable")),
                              tabPanel("Efficiency Data",
-                                      h3("Efficiency Full Table"),
-                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Efficiency' tab."),
-                                      downloadButton('PTC_PPPtabledownload2',"Download the data"),
-                                      reactable::reactableOutput("PTC_PPPtable2")),
+                                      h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Efficiency' tab."),
+                                      reactable::reactableOutput("PTC_PPPtable2"),
+                                      hr(),
+                                      downloadButton('PTC_PPPtabledownload2',"Download data")),
                              tabPanel("Frequency Data",
-                                      h3("Frequency Full Table"),
-                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Frequency' tab."),
-                                      downloadButton('PTC_FREQtabledownload2',"Download the data"),
-                                      reactable::reactableOutput("PTC_FREQtable2")),
+                                      h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Frequency' tab."),
+                                      reactable::reactableOutput("PTC_FREQtable2"),
+                                      hr(),
+                                      downloadButton('PTC_FREQtabledownload2',"Download data")),
                              tabPanel("Percentile Data",
-                                      h3("Percentile Full Table"),
-                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
-                                      downloadButton('PTC_PERCtabledownload2',"Download the data"),
-                                      reactable::reactableOutput("PTC_PERCtable2")))))),
+                                      h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
+                                      reactable::reactableOutput("PTC_PERCtable2"),
+                                      hr(),
+                                      downloadButton('PTC_PERCtabledownload2',"Download data")))))),
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
@@ -257,17 +292,21 @@ ui <- (
                reactableOutput("WA_Table"),
                downloadButton('WA_tabledownload',"Download the data"),
                hr(),
-               fluidRow(
-                 column(3,
-                        plotOutput("WA_plot1")),
-                 column(3,
-                        plotOutput("WA_plot2")),
-                 column(3,
-                        plotOutput("WA_plot3")),
-                 column(3,
-                        plotOutput("WA_plot4"))
+               verbatimTextOutput("WA_selected"),
+               hr(),
+               plotOutput("WA_trialplot")
+               # fluidRow(
+               #   column(3,
+               #          plotOutput("WA_plot1")),
+               #   column(3,
+               #          plotOutput("WA_plot2")),
+               #   column(3,
+               #          plotOutput("WA_plot3")),
+               #   column(3,
+               #          plotOutput("WA_plot4"))
+               # ),
+               # plotOutput("WA_trialplot")
                ),
-               plotOutput("WA_trialplot")),
 
 
       ########## UI CODE FOR 'ABOUT US' TAB ##########
