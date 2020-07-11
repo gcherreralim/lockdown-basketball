@@ -67,9 +67,13 @@ server <- function(input,output,session){
     TEChartOut()
   })
   
-  
+
   output$TEtable = renderReactable({
-    reactable(TE_out1(), pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "WinPerc", defaultSortOrder = "desc",
+    reactable(TE_out1(), pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "WinPerc", defaultSortOrder = "desc",
+              selection = "single", onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+              ),
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
@@ -96,7 +100,8 @@ server <- function(input,output,session){
                 Playoff = colDef(show = FALSE),
                 name = colDef(show = FALSE),
                 primary = colDef(show = FALSE),
-                secondary = colDef(show = FALSE)
+                secondary = colDef(show = FALSE),
+                .selection = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)
@@ -495,6 +500,7 @@ server <- function(input,output,session){
       PTC_effplot
     }
   })
+  
 
   # Eff Table
   output$PTC_PPPtable = renderReactable({
@@ -502,12 +508,18 @@ server <- function(input,output,session){
       
       reactable(PTC_match_e() %>%
                   select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
                 highlight = TRUE) 
@@ -516,15 +528,21 @@ server <- function(input,output,session){
       
       reactable(PTC_match_e() %>%
                   select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
-                highlight = TRUE)
+                highlight = TRUE) 
     }
   })
 
@@ -702,12 +720,18 @@ server <- function(input,output,session){
       
       reactable(PTC_match_f() %>%
                   select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
                 highlight = TRUE) 
@@ -716,15 +740,21 @@ server <- function(input,output,session){
       
       reactable(PTC_match_f() %>%
                   select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
-                highlight = TRUE)
+                highlight = TRUE) 
     }
   })
   
@@ -904,12 +934,18 @@ server <- function(input,output,session){
       
       reactable(PTC_match_p() %>%
                   select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
                 highlight = TRUE) 
@@ -918,15 +954,21 @@ server <- function(input,output,session){
       
       reactable(PTC_match_p() %>%
                   select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
-                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                pagination = FALSE, striped = FALSE, searchable = FALSE,
+                selection = "single", onClick = "select",
+                theme = reactableTheme(
+                  rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+                ),
                 defaultColDef = colDef(align = "center",
                                        minWidth = 90),
                 columns = list(
                   TeamCode = colDef(name = "Team"),
-                  Div = colDef(name = "Division")
+                  Div = colDef(name = "Division"),
+                  Conf = colDef(name = "Conference"),
+                  .selection = colDef(show = FALSE)
                 ),
                 showSortIcon = FALSE,
-                highlight = TRUE)
+                highlight = TRUE) 
       
     }
   })
@@ -937,11 +979,15 @@ server <- function(input,output,session){
     filter(TeamCode %in% PTC_match_e()$TeamCode) %>%
       filter((Team != input$PTC_team)&(Season != input$PTC_season))
   })
-
+  
   output$PTC_PPPtable2 = renderReactable({
     reactable(playtypeMatchEff() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              selection = "single", onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+              ),
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
@@ -950,7 +996,8 @@ server <- function(input,output,session){
                 Conf = colDef(name = "Conference"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
-                WinPerc = colDef(name = "Pct")
+                WinPerc = colDef(name = "Pct"),
+                .selection = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)
@@ -965,7 +1012,11 @@ server <- function(input,output,session){
   output$PTC_FREQtable2 = renderReactable({
     reactable(playtypeMatchFreq() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              selection = "single", onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+              ),
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
@@ -974,7 +1025,8 @@ server <- function(input,output,session){
                 Conf = colDef(name = "Conference"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
-                WinPerc = colDef(name = "Pct")
+                WinPerc = colDef(name = "Pct"),
+                .selection = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)
@@ -989,7 +1041,11 @@ server <- function(input,output,session){
   output$PTC_PERCtable2 = renderReactable({
     reactable(playtypeMatchPerc() %>%
                 select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
-              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              selection = "single", onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
+              ),
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
               columns = list(
@@ -998,7 +1054,8 @@ server <- function(input,output,session){
                 Conf = colDef(name = "Conference"),
                 Wins = colDef(name = "W"),
                 Losses = colDef(name = "L"),
-                WinPerc = colDef(name = "Pct")
+                WinPerc = colDef(name = "Pct"),
+                .selection = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)
@@ -1623,7 +1680,7 @@ server <- function(input,output,session){
               pagination = FALSE, striped = FALSE, searchable = FALSE, filterable = TRUE, 
               selection = "single", onClick = "select",
               theme = reactableTheme(
-                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "500", boxShadow = "inset 2px 0 0 0 #C9082A")
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
               ),
               defaultColDef = colDef(align = "center",
                                      minWidth = 90),
@@ -1631,11 +1688,7 @@ server <- function(input,output,session){
                 TeamCode = colDef(name = "Team"),
                 Div = colDef(name = "Division"),
                 Conf = colDef(name = "Conference"),
-                .selection = colDef(
-                  width = 30,
-                  style = list(cursor = "pointer"),
-                  headerStyle = list(cursor = "pointer")
-                )
+                .selection = colDef(show = FALSE)
               ),
               showSortIcon = FALSE,
               highlight = TRUE)
@@ -1648,7 +1701,40 @@ server <- function(input,output,session){
   
   
   ############## SERVER CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ################
+  WA_maintab = reactive({
+    genteams %>%
+      select(Team, SeasonRange, Conf, Div, Wins, Losses, WinPerc, EstWinPerc, PPG, OppPPG, AvgPTDiff, Pace, oEFF, dEFF, EFFDiff, 
+             OffRtg, DefRtg, NetRtg, eFGPercSeason, TSPerc, ASTPerc, ASTtoTOV,ORebPerc, RebPerc, TOVPerc, primary)
+  })
   
-  
+  output$WA_Table = renderReactable({
+    reactable(WA_maintab(),
+              sortable = TRUE, filterable = TRUE, searchable = TRUE, pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50),
+              paginationType = "numbers", selection = "single", onClick = "select", selectionId = "WA_tabselect", striped = FALSE, showSortIcon = FALSE, highlight = TRUE,
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23,64,139,0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 4px 0 0 0 #C9082A")
+              ),
+              defaultColDef = colDef(align = "center",
+                                     minWidth = 90),
+              columns = list(
+                SeasonRange = colDef(name = "Season"),
+                Conf = colDef(name = "Conference"),
+                Div = colDef(name = "Division"),
+                Wins = colDef(name = "W"),
+                Losses = colDef(name = "L"),
+                WinPerc = colDef(name = "Win%"),
+                EstWinPerc = colDef(name = "estWin%"),
+                AvgPTDiff = colDef(name = "PPGDiff"),
+                eFGPercSeason = colDef(name = "eFG%"),
+                TSPerc = colDef(name = "TS%"),
+                ASTPerc = colDef(name = "AST%"),
+                ASTtoTOV = colDef(name = "AST/TO"),
+                ORebPerc = colDef(name = "OReb%"),
+                RebPerc = colDef(name = "Reb%"),
+                TOVPerc = colDef(name = "TOV%"),
+                primary = colDef(show = FALSE),
+                .selection = colDef(show = FALSE)
+                ))
+  })
   
 }

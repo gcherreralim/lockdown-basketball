@@ -3,7 +3,9 @@ ui <- (
     tags$head(HTML('<link rel="icon", href="nba-logo-transparent.png",
                    type="image/png"/>
                    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-                   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">')),
+                   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+                   <link href="https://fonts.googleapis.com/css2?family=Paytone+One&display=swap" rel="stylesheet">
+                   <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;400;500;700;900&display=swap" rel="stylesheet">')),
     
     ############# CSS CHUNKS ################
     tags$style(HTML('* { margin:0; padding:0;}
@@ -15,15 +17,18 @@ ui <- (
                       background-color: #17408B;
                       width: 100vw;
                       margin-left: -0.78vw;
+                      letter-spacing: 3px;
+                      font-weight: 500;
+                      font-family: "Raleway", sans-serif;
                     }
                     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover{
                       color: #FFF;
-                      font-weight: 600;
+                      text-transform: uppercase;
                       font-size: 12px;
                     }
                     .navbar-default .navbar-nav>li>a {
+                      font-size: 10px;
                       color: #FFF;
-                      font-weight: 600;
                       transition: all 200ms ease-in-out;
                     }
                     .navbar-default .navbar-nav>li>a:hover{
@@ -33,6 +38,31 @@ ui <- (
                     .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
                       background-color: #C9082A;
                       color: #FFF;
+                    }
+                    .btn{
+                      background-color: #17408B;
+                      border: 3px solid #17408B;
+                      color: #FFF;
+                      font-weight: 400;
+                      text-transform: uppercase;
+                      transition: all 200ms ease-in-out;
+                    }
+                    .btn:hover{
+                      background-color: #FFF;
+                      border: 3px solid #17408B;
+                      color: #17408B;
+                      font-weight: 600;
+                    }
+                    .well{
+                      background-color: #C9082A;
+                      color: #FFF;
+                    }
+                    h1, h2, h3, h4, h5{
+                      font-family: "Open Sans", sans-serif;
+                      font-weight: 600;
+                    }
+                    .control-label{
+                      font-weight: 400;
                     }
                     ')),
     
@@ -106,7 +136,7 @@ ui <- (
                #                   uiOutput("PTC_team5"))))),
                # br(),
                sidebarLayout(
-                 sidebarPanel(width = 3,
+                 sidebarPanel(width = 2,
                               h5("Select a team:"),
                               selectInput("PTC_team", "Team:",
                                           choices = list(
@@ -130,7 +160,7 @@ ui <- (
                                            selected = "offense",
                                            inline = TRUE),
                               actionButton("PTC_reset", "Reset")),
-                 mainPanel(width = 9,
+                 mainPanel(width = 10,
                            tabsetPanel(
                              tabPanel("Playtype Efficiency",
                                       h3("Points Per Possession"),
@@ -225,6 +255,7 @@ ui <- (
       tabPanel("5-Year Window Analysis",
                h4("Select row to see additional data"),
                reactableOutput("WA_Table"),
+               downloadButton('WA_tabledownload',"Download the data"),
                hr(),
                fluidRow(
                  column(3,
