@@ -2,17 +2,46 @@ ui <- (
   fluidPage(
     tags$head(HTML('<link rel="icon", href="nba-logo-transparent.png",
                    type="image/png"/>
-                   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;900&display=swap" rel="stylesheet">')),
+                   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+                   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">')),
     
     ############# CSS CHUNKS ################
-    # tags$style(HTML('')),
+    tags$style(HTML('* { margin:0; padding:0;}
+                    body{
+                      font-family: "Open Sans", sans-serif;
+                      font-size: 12px;
+                    }
+                    .navbar{
+                      background-color: #17408B;
+                      width: 100vw;
+                      margin-left: -0.78vw;
+                    }
+                    .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover{
+                      color: #FFF;
+                      font-weight: 600;
+                      font-size: 12px;
+                    }
+                    .navbar-default .navbar-nav>li>a {
+                      color: #FFF;
+                      font-weight: 600;
+                      transition: all 200ms ease-in-out;
+                    }
+                    .navbar-default .navbar-nav>li>a:hover{
+                      background-color: #C9082A;
+                      color: #FFF;
+                    }
+                    .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
+                      background-color: #C9082A;
+                      color: #FFF;
+                    }
+                    ')),
     
     
     ############# THEME ##############
     theme = NULL,
     navbarPage(
       selected = "Home",
-      title = "NBA TEAM COMPARISONS",
+      title = "NBA Team Comparisons",
       windowTitle = "NBA Team Comparisons | 2019-20 Season",
       
       ########## UI CODE FOR 'HOME' TAB ##########
@@ -44,7 +73,12 @@ ui <- (
                mainPanel(width = 10,
                  shiny::textOutput("TEChartTitle"),
                  shiny::plotOutput("TEChart"),
-                 reactable::reactableOutput("TEtable")
+                 reactable::reactableOutput("TEtable"),
+                 br(),
+                 br(),
+                 div(style="display: inline-block; vertical-align: top; width: 200px; margin: 0 auto;",uiOutput("TE_plotdownappear")),
+                 div(style="display: inline-block; vertical-align: top; width: 200px; margin: 0 auto; padding: 0px 20px;",uiOutput("TE_tabdownappear")),
+                 br(),
                ))
       ,
       
@@ -98,25 +132,37 @@ ui <- (
                               actionButton("PTC_reset", "Reset")),
                  mainPanel(width = 9,
                            tabsetPanel(
-                             tabPanel("Points Per Possession",
+                             tabPanel("Playtype Efficiency",
                                       h3("Points Per Possession"),
                                       plotly::plotlyOutput("PTC_PPPplot",
                                                    height = "500px",
                                                    width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PPPtable")),
-                             tabPanel("Playtype Percentile",
-                                      h3("Playtype Percentile"),
-                                      plotly::plotlyOutput("PTC_PERCplot",
+                             tabPanel("Playtype Frequency",
+                                      h3("Frequency"),
+                                      plotly::plotlyOutput("PTC_FREQplot",
                                                    height = "500px",
                                                    width = "700px"),
                                       shiny::hr(),
+                                      reactable::reactableOutput("PTC_FREQtable")),
+                             tabPanel("Playtype Percentile",
+                                      h3("Percentile"),
+                                      plotly::plotlyOutput("PTC_PERCplot",
+                                                           height = "500px",
+                                                           width = "700px"),
+                                      shiny::hr(),
                                       reactable::reactableOutput("PTC_PERCtable")),
-                             tabPanel("Efficiency (PPP) Data",
+                             tabPanel("Efficiency Data",
                                       h3("Efficiency Full Table"),
-                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Points Per Possession' tab."),
+                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Efficiency' tab."),
                                       downloadButton('PTC_PPPtabledownload2',"Download the data"),
                                       reactable::reactableOutput("PTC_PPPtable2")),
+                             tabPanel("Frequency Data",
+                                      h3("Frequency Full Table"),
+                                      h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Frequency' tab."),
+                                      downloadButton('PTC_FREQtabledownload2',"Download the data"),
+                                      reactable::reactableOutput("PTC_FREQtable2")),
                              tabPanel("Percentile Data",
                                       h3("Percentile Full Table"),
                                       h4("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
@@ -139,13 +185,13 @@ ui <- (
                               selected = NULL,
                               options = list(maxItems = 5)),
                             actionButton("MTC_reset", "Reset Teams")),
-               mainPanel(width = 8,
+               mainPanel(width = 10,
                          fluidRow(
                            column(12,
                                   h3("Multiple Team Playtype Comparisons"),
                                   fluidRow(
                                     column(4,
-                                           "Offensive Frequency",
+                                           "Offensive Frequency (%)",
                                            plotly::plotlyOutput("MTC_OffFreqPlot")),
                                     column(4,
                                            "Offensive Efficiency",
@@ -159,7 +205,7 @@ ui <- (
                                   shiny::br(),
                                   fluidRow(
                                     column(4,
-                                           "Defensive Frequency",
+                                           "Defensive Frequency (%)",
                                            plotly::plotlyOutput("MTC_DefFreqPlot")),
                                     column(4,
                                            "Defensive Efficiency",
@@ -172,32 +218,33 @@ ui <- (
                          shiny::hr(),
                          reactable::reactableOutput("MTC_SumTable"))
                             )
-      #,
+      ,
 
 
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
-      # tabPanel("5-Year Window Analysis",
-      #          h4("Select row to see additional data"),
-      #          reactableOutput("WA_Table"),
-      #          hr(),
-      #          fluidRow(
-      #            column(3,
-      #                   plotOutput("WA_plot1")),
-      #            column(3,
-      #                   plotOutput("WA_plot2")),
-      #            column(3,
-      #                   plotOutput("WA_plot3")),
-      #            column(3,
-      #                   plotOutput("WA_plot4"))
-      #          ),
-      #          plotOutput("WA_trialplot")),
-      # 
-      # 
-      # ########## UI CODE FOR 'ABOUT US' TAB ##########
-      # tabPanel("About Us",
-      #          mainPanel(
-      #            includeHTML("html_pages/about.html")
-      #          ))
+      tabPanel("5-Year Window Analysis",
+               h4("Select row to see additional data"),
+               reactableOutput("WA_Table"),
+               hr(),
+               fluidRow(
+                 column(3,
+                        plotOutput("WA_plot1")),
+                 column(3,
+                        plotOutput("WA_plot2")),
+                 column(3,
+                        plotOutput("WA_plot3")),
+                 column(3,
+                        plotOutput("WA_plot4"))
+               ),
+               plotOutput("WA_trialplot")),
+
+
+      ########## UI CODE FOR 'ABOUT US' TAB ##########
+      tabPanel("About Us",
+               mainPanel(
+                 #includeHTML("html_pages/about.html")
+                 h3("About Us!")
+               ))
     )
   )
 )

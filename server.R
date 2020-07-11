@@ -40,7 +40,7 @@ server <- function(input,output,session){
     paste0(input$TExaxis, " - ", input$TEyaxis, " Comparison")
   })
   
-  output$TEChart = renderPlot({
+  TEChartOut = reactive({
     req(input$TExaxis, input$TEyaxis)
     ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
                           xmax = max(TE_var1()), ymax = max(TE_var2()), 
@@ -60,6 +60,13 @@ server <- function(input,output,session){
             panel.background = element_rect(fill = 'white'),
             axis.ticks = element_blank())
   })
+  
+  
+  output$TEChart = renderPlot({
+    req(TEChartOut())
+    TEChartOut()
+  })
+  
   
   output$TEtable = renderReactable({
     reactable(TE_out1(), pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "WinPerc", defaultSortOrder = "desc",
@@ -100,6 +107,39 @@ server <- function(input,output,session){
     updateVarSelectInput(session, 'TEyaxis', selected = "WinPerc")
   })
   
+  output$TE_plotdownappear = renderUI({
+    if(length(input$TEteams)>=2){
+      downloadButton('TE_graphdownload', "Download the graph")
+    }
+  })
+  
+  output$TE_graphdownload = downloadHandler(
+    filename = function(){
+      paste0(as.character(input$TExaxis),"-",as.character(input$TEyaxis),' Comparison Graph (',paste(input$TEteams,collapse=","), ').png')
+    },
+    content = function(graphfile){
+      req(TEChartOut())
+      ggsave(graphfile, plot = TEChartOut(), device = 'png')
+    }
+  )
+  
+  output$TE_tabdownappear = renderUI({
+    if(length(input$TEteams)>=2){
+      downloadButton('TE_tabledownload',"Download the data")
+    }
+  })
+  
+  output$TE_tabledownload <- downloadHandler(
+    filename = function() {
+      paste0(as.character(input$TExaxis),"-",as.character(input$TEyaxis),' Comparisons (',paste(input$TEteams,collapse=","), ').csv')
+    },
+    content = function(file) {
+      TEtabledown1 = TE_out1() %>%
+        select(-Team, -Season, -EstWinPerc, -ProjWinPerc, -AchLevel, -Playoff, -name, -primary, -secondary)
+      
+      write.csv(TEtabledown1, file, row.names = FALSE)
+    }
+  )
   
   ############## SERVER CODE FOR 'PLAY TYPE COMPARISONS' TAB ################
   # Selected Team - Eff
@@ -109,7 +149,16 @@ server <- function(input,output,session){
              SeasonRange == input$PTC_season,
              OffDef == input$PTC_offdef)
   })
+  
   # Selected Team - Freq
+  PTCteamfreq = reactive({
+    playtypeFreq %>%
+      filter(Team == input$PTC_team,
+             SeasonRange == input$PTC_season,
+             OffDef == input$PTC_offdef)
+  })
+  
+  # Selected Team - Perc
   PTCteamperc = reactive({
     playtypePerc %>%
       filter(Team == input$PTC_team,
@@ -125,8 +174,17 @@ server <- function(input,output,session){
              OffDef == input$PTC_offdef)
     PTCotherteamsE
   })
-
+  
   # Other Teams - Freq
+  PTCotherfreq = reactive({
+    PTCotherteamsF = playtypeFreq %>%
+      filter(Team != input$PTC_team,
+             Conf %in% input$PTC_conf,
+             OffDef == input$PTC_offdef)
+    PTCotherteamsF
+  })
+
+  # Other Teams - Perc
   PTCotherperc = reactive({
     PTCotherteamsP = playtypePerc %>%
       filter(Team != input$PTC_team,
@@ -139,8 +197,13 @@ server <- function(input,output,session){
   PTCallEff = reactive({
     rbind(PTCteameff(), PTCothereff())
   })
-
+  
   # Merge - Freq
+  PTCallFreq = reactive({
+    rbind(PTCteamfreq(), PTCotherfreq())
+  })
+
+  # Merge - Perc
   PTCallPerc = reactive({
     rbind(PTCteamperc(), PTCotherperc())
   })
@@ -158,37 +221,46 @@ server <- function(input,output,session){
       KNNeff
     }
   })
-
+  
   # KNN Data - Freq
-  PTC_KNNperc = reactive({
+  PTC_KNNfreq = reactive({
     if (input$PTC_offdef == "offense") {
       
-      KNNeff = PTCallPerc() %>%
+      KNNfreq = PTCallFreq() %>%
         select(8:17)
-      KNNeff
+      KNNfreq
     } else {
-      KNNeff = PTCallPerc() %>%
+      KNNfreq = PTCallFreq() %>%
         select(9:17)
-      KNNeff
+      KNNfreq
     }
   })
 
-  # # Z-Normalization Eff
-  # PTC_zscoreEff = reactive({
-  #   data.frame(scale(PTC_KNNeff()))
-  # })
-  # 
-  # # Z-Normalization Freq
-  # PTC_zscorePerc = reactive({
-  #   data.frame(scale(PTC_KNNperc()))
-  # })
+  # KNN Data - Perc
+  PTC_KNNperc = reactive({
+    if (input$PTC_offdef == "offense") {
+      
+      KNNfreq = PTCallPerc() %>%
+        select(8:17)
+      KNNfreq
+    } else {
+      KNNfreq = PTCallPerc() %>%
+        select(9:17)
+      KNNfreq
+    }
+  })
 
   # KNN Eff
   PTC_KNNmatch_e = reactive({
     as.numeric(knnx.index(PTC_KNNeff(), PTC_KNNeff()[1, ,drop = FALSE], k = 6))
   })
-
+  
   # KNN Freq
+  PTC_KNNmatch_f = reactive({
+    as.numeric(knnx.index(PTC_KNNfreq(), PTC_KNNfreq()[1, ,drop = FALSE], k = 6))
+  })
+
+  # KNN Perc
   PTC_KNNmatch_p = reactive({
     as.numeric(knnx.index(PTC_KNNperc(), PTC_KNNperc()[1, ,drop = FALSE], k = 6))
   })
@@ -199,6 +271,13 @@ server <- function(input,output,session){
     selteam_e = allmatch_e[1,]
     othermatch_e = allmatch_e[-1,]
     combine_e = rbind(selteam_e, othermatch_e)
+  })
+  
+  PTC_match_f = reactive({
+    allmatch_f = PTCallFreq()[PTC_KNNmatch_f(),]
+    selteam_f = allmatch_f[1,]
+    othermatch_f = allmatch_f[-1,]
+    combine_f = rbind(selteam_f, othermatch_f)
   })
 
   PTC_match_p = reactive({
@@ -217,6 +296,19 @@ server <- function(input,output,session){
     } else{
       
       PTC_match_e() %>%
+        select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    }
+  })
+  
+  PTC_FREQdata = reactive({
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_match_f() %>%
+        select(Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+      
+    } else{
+      
+      PTC_match_f() %>%
         select(Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
     }
   })
@@ -437,6 +529,207 @@ server <- function(input,output,session){
   })
 
   # Freq Plot
+  output$PTC_FREQplot = renderPlotly({
+    validate(
+      need(dim(PTCotherfreq())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
+    )
+    
+    #Assigning Team Names for Colors
+    PTC_t1f = as.character(PTC_match_f()[1,1])
+    PTC_t2f = as.character(PTC_match_f()[2,1])
+    PTC_t3f = as.character(PTC_match_f()[3,1])
+    PTC_t4f = as.character(PTC_match_f()[4,1])
+    PTC_t5f = as.character(PTC_match_f()[5,1])
+    PTC_t6f = as.character(PTC_match_f()[6,1])
+    
+    
+    if (input$PTC_offdef == "offense") {
+      
+      PTC_freqplot = plot_ly(type = "scatterpolar",
+                            mode = "closest",
+                            fill = "toself",
+                            colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[1,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_f()[1,2],
+          marker = list(color = color_map[PTC_t1f]),
+          fillcolor = toRGB(color_map[PTC_t1f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[2,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[2,2],
+          marker = list(color = color_map[PTC_t2f]),
+          fillcolor = toRGB(color_map[PTC_t2f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[3,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[3,2],
+          marker = list(color = color_map[PTC_t3f]),
+          fillcolor = toRGB(color_map[PTC_t3f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[4,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[4,2],
+          marker = list(color = color_map[PTC_t4f]),
+          fillcolor = toRGB(color_map[PTC_t4f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[5,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[5,2],
+          marker = list(color = color_map[PTC_t5f]),
+          fillcolor = toRGB(color_map[PTC_t5f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[6,])),
+          theta = c("Cut", "Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[6,2],
+          marker = list(color = color_map[PTC_t6f]),
+          fillcolor = toRGB(color_map[PTC_t6f], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,35),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
+      PTC_freqplot
+      
+    } else {
+      PTC_freqplot = plot_ly(type = "scatterpolar",
+                            mode = "closest",
+                            fill = "toself",
+                            colors = color_map) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[1,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          name = PTC_match_f()[1,2],
+          marker = list(color = color_map[PTC_t1f]),
+          fillcolor = toRGB(color_map[PTC_t1f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[2,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[2,2],
+          marker = list(color = color_map[PTC_t2f]),
+          fillcolor = toRGB(color_map[PTC_t2f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[3,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[3,2],
+          marker = list(color = color_map[PTC_t3f]),
+          fillcolor = toRGB(color_map[PTC_t3f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[4,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[4,2],
+          marker = list(color = color_map[PTC_t4f]),
+          fillcolor = toRGB(color_map[PTC_t4f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[5,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[5,2],
+          marker = list(color = color_map[PTC_t5f]),
+          fillcolor = toRGB(color_map[PTC_t5f], alpha = 0.5)
+        ) %>%
+        add_trace(
+          r = as.numeric(as.matrix(PTC_FREQdata()[6,])),
+          theta = c("Handoff", "Iso", "OffScreen", "PNRHandler", "PNRRollman", "PostUp", "Putbacks", "SpotUp", "Transition"),
+          showlegend = TRUE,
+          mode = "markers",
+          visible = "legendonly",
+          name = PTC_match_f()[6,2],
+          marker = list(color = color_map[PTC_t6f]),
+          fillcolor = toRGB(color_map[PTC_t6f], alpha = 0.5)
+        ) %>%
+        layout(
+          polar = list(
+            radialaxis = list(
+              visible = T,
+              range = c(0,1.5),
+              tickfont = list(size = 11)),
+            angularaxis = list(tickfont = list(size = 11))),
+          showlegend = TRUE,
+          legend = list(font = list(size = 10)))
+      PTC_effplot
+    }
+  })
+  
+  # Freq Table
+  output$PTC_FREQtable = renderReactable({
+    if (input$PTC_offdef == "offense") {
+      
+      reactable(PTC_match_f() %>%
+                  select(TeamCode, Conf, Div, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE) 
+      
+    } else {
+      
+      reactable(PTC_match_f() %>%
+                  select(TeamCode, Conf, Div, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition),
+                pagination = FALSE, striped = TRUE, searchable = FALSE,
+                defaultColDef = colDef(align = "center",
+                                       minWidth = 90),
+                columns = list(
+                  TeamCode = colDef(name = "Team"),
+                  Div = colDef(name = "Division")
+                ),
+                showSortIcon = FALSE,
+                highlight = TRUE)
+    }
+  })
+  
+  
+  # Perc Plot
   output$PTC_PERCplot = renderPlotly({
     validate(
       need(dim(PTCotherperc())[1]>=5, "Sorry, the required number of matches was not met. Please change the input filters.")
@@ -605,7 +898,7 @@ server <- function(input,output,session){
     }
   })
 
-  # Freq Table
+  # Perc Table
   output$PTC_PERCtable = renderReactable({
     if (input$PTC_offdef == "offense") {
       
@@ -662,6 +955,30 @@ server <- function(input,output,session){
               showSortIcon = FALSE,
               highlight = TRUE)
   })
+  
+  playtypeMatchFreq = reactive({
+    playtypes %>%
+      filter(TeamCode %in% PTC_match_f()$TeamCode) %>%
+      filter((Team != input$PTC_team)&(Season != input$PTC_season))
+  })
+  
+  output$PTC_FREQtable2 = renderReactable({
+    reactable(playtypeMatchFreq() %>%
+                select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary),
+              pagination = FALSE, striped = TRUE, searchable = FALSE, defaultSorted = "PlayType", defaultSortOrder = "asc", filterable = TRUE,
+              defaultColDef = colDef(align = "center",
+                                     minWidth = 90),
+              columns = list(
+                TeamCode = colDef(name = "Team"),
+                Div = colDef(name = "Division"),
+                Conf = colDef(name = "Conference"),
+                Wins = colDef(name = "W"),
+                Losses = colDef(name = "L"),
+                WinPerc = colDef(name = "Pct")
+              ),
+              showSortIcon = FALSE,
+              highlight = TRUE)
+  })
 
   playtypeMatchPerc = reactive({
     playtypes %>%
@@ -689,7 +1006,7 @@ server <- function(input,output,session){
   
   output$PTC_PPPtabledownload2 <- downloadHandler(
     filename = function() {
-      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",'efficiencymatchtable', '.csv')
+      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",as.character(input$PTC_offdef),'efficiencymatchtable', '.csv')
     },
     content = function(file) {
       PPPtabledown1 = playtypeMatchEff()
@@ -701,9 +1018,23 @@ server <- function(input,output,session){
     }
   )
   
+  output$PTC_FREQtabledownload2 <- downloadHandler(
+    filename = function() {
+      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",as.character(input$PTC_offdef),'frequencymatchtable', '.csv')
+    },
+    content = function(file) {
+      FREQtabledown1 = playtypeMatchFreq()
+      
+      FREQtabledown2 <- FREQtabledown1 %>% 
+        select(-Team, -SeasonRange, -Conf, -Div, -Season, -GP, -Mins, -Playoff, -name, -primary, -secondary)  
+      
+      write.csv(FREQtabledown2, file)
+    }
+  )
+  
   output$PTC_PERCtabledownload2 <- downloadHandler(
     filename = function() {
-      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",'percentilematchtable', '.csv')
+      paste0(as.character(input$PTC_team),"_",as.character(input$PTC_season),"_",as.character(input$PTC_offdef),'percentilematchtable', '.csv')
     },
     content = function(file) {
       PERCtabledown1 = playtypeMatchPerc()
@@ -766,7 +1097,6 @@ server <- function(input,output,session){
    
       MTC_oe_plot = plot_ly(type = "scatterpolar",
                             mode = "markers",
-                            sort = FALSE,
                             fill = "toself",
                             colors = color_map) %>%
         add_trace(
@@ -854,7 +1184,6 @@ server <- function(input,output,session){
     
     MTC_de_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
-                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
@@ -942,7 +1271,6 @@ server <- function(input,output,session){
     
     MTC_of_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
-                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
@@ -1030,7 +1358,6 @@ server <- function(input,output,session){
     
     MTC_df_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
-                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
@@ -1118,7 +1445,6 @@ server <- function(input,output,session){
     
     MTC_op_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
-                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
@@ -1206,7 +1532,6 @@ server <- function(input,output,session){
     
     MTC_dp_plot = plot_ly(type = "scatterpolar",
                           mode = "markers",
-                          sort = FALSE,
                           fill = "toself",
                           colors = color_map) %>%
       add_trace(
@@ -1269,6 +1594,53 @@ server <- function(input,output,session){
         legend = list(font = list(size = 10)))
     MTC_dp_plot
   })
+  
+  # MTC Sum Table
+  output$MTC_SumTable = renderReactable({
+    validate(
+      need(length(input$MTC_teams)>=1, "Select more than 1 team to display summary table")
+    )
+    
+    tabEff = playtypeEff %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Metric = "PPP/Efficiency") %>%
+      select(TeamCode, Conf, Div, Metric, OffDef, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    tabFreq = playtypeFreq %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Metric = "Frequency (%)") %>%
+      select(TeamCode, Conf, Div, Metric, OffDef, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    tabPerc = playtypePerc %>%
+      filter(TeamCode %in% input$MTC_teams) %>%
+      mutate(Metric = "Percentile") %>%
+      select(TeamCode, Conf, Div, Metric, OffDef, Cut, Handoff, Iso, OffScreen, PNRHandler, PNRRollman, PostUp, Putbacks, SpotUp, Transition)
+    
+    tabFull = rbind(tabEff, tabFreq, tabPerc) %>%
+      arrange(TeamCode, Metric)
+    
+    reactable(tabFull,
+              pagination = FALSE, striped = FALSE, searchable = FALSE, filterable = TRUE, 
+              selection = "single", onClick = "select",
+              theme = reactableTheme(
+                rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "500", boxShadow = "inset 2px 0 0 0 #C9082A")
+              ),
+              defaultColDef = colDef(align = "center",
+                                     minWidth = 90),
+              columns = list(
+                TeamCode = colDef(name = "Team"),
+                Div = colDef(name = "Division"),
+                Conf = colDef(name = "Conference"),
+                .selection = colDef(
+                  width = 30,
+                  style = list(cursor = "pointer"),
+                  headerStyle = list(cursor = "pointer")
+                )
+              ),
+              showSortIcon = FALSE,
+              highlight = TRUE)
+  })
+  
   
   observeEvent(input$MTC_reset,{
     updateSelectizeInput(session, "MTC_teams", selected = "")
