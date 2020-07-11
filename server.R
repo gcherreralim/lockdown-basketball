@@ -17,11 +17,6 @@ server <- function(input,output,session){
   })
   
   TE_out1 = reactive({
-    validate(
-      need(length(input$TEteams) > 1,
-           "Please select at least two teams to see plot and table results!")
-    )
-    
     genteams %>%
       filter(TeamCode %in% input$TEteams)
   })
@@ -41,6 +36,7 @@ server <- function(input,output,session){
   })
   
   TEChartOut = reactive({
+    
     req(input$TExaxis, input$TEyaxis)
     ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
                           xmax = max(TE_var1()), ymax = max(TE_var2()), 
@@ -63,13 +59,23 @@ server <- function(input,output,session){
   
   
   output$TEChart = renderPlot({
+    validate(
+      need(length(input$TEteams) > 1,
+           "Please select at least two teams to see plot and table results!")
+    )
+    
     req(TEChartOut())
     TEChartOut()
   })
   
 
   output$TEtable = renderReactable({
-    reactable(TE_out1(), pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = "WinPerc", defaultSortOrder = "desc",
+    validate(
+      need(length(input$TEteams) > 1,
+           "")
+    )
+    
+    reactable(TE_out1(), pagination = FALSE, striped = FALSE, searchable = FALSE, defaultSorted = as.character(input$TE), defaultSortOrder = "desc",
               selection = "single", onClick = "select",
               theme = reactableTheme(
                 rowSelectedStyle = list(backgroundColor = "rgba(23, 64, 139, 0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 2px 0 0 0 #C9082A")
@@ -1138,7 +1144,7 @@ server <- function(input,output,session){
   output$MTC_OffEffPlot = renderPlotly({
     
     validate(
-      need(dim(MTC_teams_e())[1]>=1, "Choose at least 1 team to display graphs.")
+      need(dim(MTC_teams_e())[1]>=1, "")
     )
     
     MTC_oe_data = MTC_teams_e() %>%
@@ -1225,7 +1231,7 @@ server <- function(input,output,session){
   output$MTC_DefEffPlot = renderPlotly({
     
     validate(
-      need(dim(MTC_teams_e())[1]>=1, "Choose at least 1 team to display graphs.")
+      need(dim(MTC_teams_e())[1]>=1, "")
     )
     
     MTC_de_data = MTC_teams_e() %>%
@@ -1399,7 +1405,7 @@ server <- function(input,output,session){
   output$MTC_DefFreqPlot = renderPlotly({
     
     validate(
-      need(dim(MTC_teams_f())[1]>=1, "Choose at least 1 team to display graphs.")
+      need(dim(MTC_teams_f())[1]>=1, "")
     )
     
     MTC_df_data = MTC_teams_f() %>%
@@ -1486,7 +1492,7 @@ server <- function(input,output,session){
   output$MTC_OffPercPlot = renderPlotly({
     
     validate(
-      need(dim(MTC_teams_p())[1]>=1, "Choose at least 1 team to display graphs.")
+      need(dim(MTC_teams_p())[1]>=1, "")
     )
     
     MTC_op_data = MTC_teams_p() %>%
@@ -1573,7 +1579,7 @@ server <- function(input,output,session){
   output$MTC_DefPercPlot = renderPlotly({
     
     validate(
-      need(dim(MTC_teams_p())[1]>=1, "Choose at least 1 team to display graphs.")
+      need(dim(MTC_teams_p())[1]>=1, "")
     )
     
     MTC_dp_data = MTC_teams_p() %>%
@@ -1745,19 +1751,114 @@ server <- function(input,output,session){
     getReactableState("WA_Table", "selected")
   })
   
-  output$WA_selected = renderPrint({
-    print(genteamsWA_A[selected(),]$TeamCode)
+  ### Plot Output 1
+  output$WA_titleappear1 = renderUI({
+    if(length(selected())>0){
+      textOutput("WA_title1")
+    }
   })
   
-  output$WA_trialplot = renderPlot({
+  output$WA_subtitleappear1 = renderUI({
+    if(length(selected())>0){
+      textOutput("WA_subtitle1")
+    }
+  })
+  
+  output$WA_plotappear1 = renderUI({
+    if(length(selected())>0){
+      plotOutput("WA_plot1")
+    }
+  })
+  
+  output$WA_title1 = renderText({
+    paste0(genteamsWA_A[selected(),]$Team, " (", genteamsWA_A[selected(),]$SeasonRange,")")
+  })
+  
+  output$WA_subtitle1 = renderText({
+    paste0("Amount Above Season Average")
+  })
+  
+  output$WA_plot1 = renderPlot({
     A1set = genteamsWA_A %>%
       filter(TeamCode == genteamsWA_A[selected(),]$TeamCode) %>%
       pivot_longer(cols = c(5,7,9,11,13,15,17,19,21), names_to = "Metrics", values_to = "AmountAboveSeasonAverage") %>%
       select(1:4,tail(names(.),2)) %>%
       mutate(posneg = ifelse(AmountAboveSeasonAverage < 0, "neg", "pos"))
     
-    ggplot(A1set, aes(x = Metrics, Y = AmountAboveSeasonAverage)) +
-      
+    ggplot(A1set, aes(x = reorder(Metrics, AmountAboveSeasonAverage), y = AmountAboveSeasonAverage, fill = posneg)) +
+      geom_bar(stat = "identity", show.legend = F, width = 0.6) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 3) +
+      scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
+      scale_x_discrete(labels=c("PPGDiff1" = "Points per Game",
+                                "PaceDiff1" = "Pace",
+                                "OppPPGDiff1" = "Opp Points per Game",
+                                "OffRtgDiff1" = "Offensive Rating",
+                                "oEFFDiff1" = "Offensive Efficiency",
+                                "NetRtgDiff1" = "Net Rating",
+                                "EFFDiffDiff1" = "Net Efficiency",
+                                "DefRtgDiff1" = "Defensive Rating",
+                                "dEFFDiff1" = "Defensive Efficiency")) +
+      coord_flip() + 
+      labs(x = "",
+           y = "",
+           caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") +
+      theme(text = element_text(size = 12),
+            panel.grid.major = element_line(colour = "#E4E4E4"),
+            panel.grid.minor = element_line(color = "#E4E4E4"),
+            panel.background = element_rect(fill = 'white'),
+            axis.ticks = element_blank(),
+            axis.text.y = element_text(face = "bold"))
   })
   
+  ### Plot Output 2
+  
+  
+  ### Plot Output 3
+  output$WA_subtitleappear3 = renderUI({
+    if(length(selected())>0){
+      textOutput("WA_subtitle3")
+    }
+  })
+  
+  output$WA_plotappear3 = renderUI({
+    if(length(selected())>0){
+      plotOutput("WA_plot3")
+    }
+  })
+  
+  output$WA_subtitle3 = renderText({
+    paste0("Amount Above 5-Year Average")
+  })
+  
+  output$WA_plot3 = renderPlot({
+    A1set = genteamsWA_A %>%
+      filter(TeamCode == genteamsWA_A[selected(),]$TeamCode) %>%
+      pivot_longer(cols = c(6,8,10,12,14,16,18,20,22), names_to = "Metrics", values_to = "AmountAboveWindowAverage") %>%
+      select(1:4,tail(names(.),2)) %>%
+      mutate(posneg = ifelse(AmountAboveWindowAverage < 0, "neg", "pos"))
+    
+    ggplot(A1set, aes(x = reorder(Metrics, AmountAboveWindowAverage), y = AmountAboveWindowAverage, fill = posneg)) +
+      geom_bar(stat = "identity", show.legend = F, width = 0.6) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 3) +
+      scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
+      scale_x_discrete(labels=c("PPGDiff5" = "Points per Game",
+                                "PaceDiff5" = "Pace",
+                                "OppPPGDiff5" = "Opp Points per Game",
+                                "OffRtgDiff5" = "Offensive Rating",
+                                "oEFFDiff5" = "Offensive Efficiency",
+                                "NetRtgDiff5" = "Net Rating",
+                                "EFFDiffDiff5" = "Net Efficiency",
+                                "DefRtgDiff5" = "Defensive Rating",
+                                "dEFFDiff5" = "Defensive Efficiency")) +
+      coord_flip() + 
+      labs(x = "",
+           y = "",
+           caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") +
+      theme(text = element_text(size = 12),
+            panel.grid.major = element_line(colour = "#E4E4E4"),
+            panel.grid.minor = element_line(color = "#E4E4E4"),
+            panel.background = element_rect(fill = 'white'),
+            axis.ticks = element_blank(),
+            axis.text.y = element_text(face = "bold"))
+  })
 }

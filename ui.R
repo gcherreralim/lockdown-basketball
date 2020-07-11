@@ -24,6 +24,7 @@ ui <- (
                       color: #FFF;
                       text-transform: uppercase;
                       letter-spacing: 3px;
+                      font-weight: 600;
                       font-size: 12px;
                     }
                     .navbar-default .navbar-nav>li>a {
@@ -292,20 +293,19 @@ ui <- (
                reactableOutput("WA_Table"),
                downloadButton('WA_tabledownload',"Download the data"),
                hr(),
-               verbatimTextOutput("WA_selected"),
-               hr(),
-               plotOutput("WA_trialplot")
-               # fluidRow(
-               #   column(3,
-               #          plotOutput("WA_plot1")),
-               #   column(3,
-               #          plotOutput("WA_plot2")),
-               #   column(3,
-               #          plotOutput("WA_plot3")),
-               #   column(3,
-               #          plotOutput("WA_plot4"))
-               # ),
-               # plotOutput("WA_trialplot")
+               uiOutput("WA_titleappear1"),
+               fluidRow(
+                 column(3,
+                        uiOutput("WA_subtitleappear1"),
+                        uiOutput("WA_plotappear1")),
+                 column(3,
+                        plotOutput("WA_plot2")),
+                 column(3,
+                        uiOutput("WA_subtitleappear3"),
+                        uiOutput("WA_plotappear3")),
+                 column(3,
+                        plotOutput("WA_plot4"))
+               )
                ),
 
 
