@@ -96,6 +96,17 @@ ui <- (
                       color: #FFF;
                       box-shadow: inset 0 -10px 0 -6px #EDB439;
                     }
+                    .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+                      background-color: #C9082A;
+                      color: #FFF;
+                    }
+                    .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {
+                      border-color: transparent;
+                    }
+                    .nav-tabs {
+                       border-bottom: 3px solid #d45500;
+                       background-color: #17408B;
+                    }
                     ')),
     
     
@@ -116,6 +127,7 @@ ui <- (
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
       tabPanel("Team Evaluation",
                h1('title'),
+               h2('subtitle'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "TEteams",
@@ -149,6 +161,7 @@ ui <- (
       ########## UI CODE FOR 'PLAY TYPE COMPARISONS' TAB ##########
       tabPanel("Play Type Comparisons",
                h1('title'),
+               h2('subtitle'),
                # fluidRow(
                #   column(2,
                #          fluidRow(h5("Selected Team")),
@@ -240,6 +253,7 @@ ui <- (
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
                h1('title'),
+               h2('subtitle'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "MTC_teams",
@@ -293,6 +307,7 @@ ui <- (
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
       tabPanel("5-Year Window Analysis",
                h1('title'),
+               h2('subtitle'),
                h4("Select row to see additional data"),
                h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
                reactableOutput("WA_Table"),
@@ -304,12 +319,14 @@ ui <- (
                         uiOutput("WA_subtitleappear1"),
                         uiOutput("WA_plotappear1")),
                  column(3,
-                        plotOutput("WA_plot2")),
+                        uiOutput("WA_subtitleappear2"),
+                        uiOutput("WA_plotappear2")),
                  column(3,
                         uiOutput("WA_subtitleappear3"),
                         uiOutput("WA_plotappear3")),
                  column(3,
-                        plotOutput("WA_plot4"))
+                        uiOutput("WA_subtitleappear4"),
+                        uiOutput("WA_plotappear4"))
                )
                ),
 

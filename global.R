@@ -200,3 +200,57 @@ genteamsWA_A = genteamsWA_A %>%
 
 
 # For Season/Window Percent Diff
+genteamsWA_P = genteams %>%
+  select(TeamCode, Team, Season, SeasonRange, WinPerc, EstWinPerc, eFGPercSeason, TSPerc, ASTPerc, TOVPerc, ASTtoTOV, ORebPerc, RebPerc)
+
+genteams_g2ave1 = genteamsWA_P %>%
+  group_by(Season) %>%
+  dplyr::summarize(WPAve1 = mean(WinPerc),
+                   EWPAve1 = mean(EstWinPerc),
+                   EFGAve1 = mean(eFGPercSeason),
+                   TSAve1 = mean(TSPerc),
+                   ASTAve1 = mean(ASTPerc),
+                   TOAve1 = mean(TOVPerc),
+                   ATAve1 = mean(ASTtoTOV),
+                   OREBAve1 = mean(ORebPerc),
+                   REBAve1 = mean(RebPerc)
+  )
+
+genteams_g2ave5 = genteamsWA_P %>%
+  dplyr::mutate(WPAve5 = mean(WinPerc),
+                EWPAve5 = mean(EstWinPerc),
+                EFGAve5 = mean(eFGPercSeason),
+                TSAve5 = mean(TSPerc),
+                ASTAve5 = mean(ASTPerc),
+                TOAve5 = mean(TOVPerc),
+                ATAve5 = mean(ASTtoTOV),
+                OREBAve5 = mean(ORebPerc),
+                REBAve5 = mean(RebPerc)
+  ) %>%
+  select(Season, WPAve5, EWPAve5, EFGAve5, TSAve5, ASTAve5, TOAve5, ATAve5, OREBAve5, REBAve5) %>%
+  distinct()
+
+genteamsWA_P = genteamsWA_P %>%
+  left_join(genteams_g2ave1, by = "Season") %>%
+  left_join(genteams_g2ave5, by = "Season") %>%
+  distinct() %>%
+  mutate(WPDiff1 = ifelse(WinPerc > WPAve1, (WinPerc-WPAve1)/WPAve1, -(WPAve1-WinPerc)/WPAve1),
+         WPDiff5 = ifelse(WinPerc > WPAve5, (WinPerc-WPAve5)/WPAve5, -(WPAve5-WinPerc)/WPAve5),
+         EWPDiff1 = ifelse(EstWinPerc > EWPAve1, (EstWinPerc-EWPAve1)/EWPAve1, -(EWPAve1-EstWinPerc)/EWPAve1),
+         EWPDiff5 = ifelse(EstWinPerc > EWPAve5, (EstWinPerc-EWPAve5)/EWPAve5, -(EWPAve5-EstWinPerc)/EWPAve5),
+         EFGDiff1 = ifelse(eFGPercSeason > EFGAve1, (eFGPercSeason-EFGAve1)/EFGAve1, -(EFGAve1-eFGPercSeason)/EFGAve1),
+         EFGDiff5 = ifelse(eFGPercSeason > EFGAve5, (eFGPercSeason-EFGAve5)/EFGAve5, -(EFGAve5-eFGPercSeason)/EFGAve5),
+         TSDiff1 = ifelse(TSPerc > TSAve1, (TSPerc-TSAve1)/TSAve1, -(TSAve1-TSPerc)/TSAve1),
+         TSDiff5 = ifelse(TSPerc > TSAve5, (TSPerc-TSAve5)/TSAve5, -(TSAve5-TSPerc)/TSAve5),
+         ASTDiff1 = ifelse(ASTPerc > ASTAve1, (ASTPerc-ASTAve1)/ASTAve1, -(ASTAve1-ASTPerc)/ASTAve1),
+         ASTDiff5 = ifelse(ASTPerc > ASTAve5, (ASTPerc-ASTAve5)/ASTAve5, -(ASTAve5-ASTPerc)/ASTAve5),
+         TODiff1 = ifelse(TOVPerc > TOAve1, -(TOVPerc-TOAve1)/TOAve1, (TOAve1-TOVPerc)/TOAve1),
+         TODiff5 = ifelse(TOVPerc > TOAve5, -(TOVPerc-TOAve5)/TOAve5, (TOAve5-TOVPerc)/TOAve5),
+         ATDiff1 = ifelse(ASTtoTOV > ATAve1, (ASTtoTOV-ATAve1)/ATAve1, -(ATAve1-ASTtoTOV)/ATAve1),
+         ATDiff5 = ifelse(ASTtoTOV > ATAve5, (ASTtoTOV-ATAve5)/ATAve5, -(ATAve5-ASTtoTOV)/ATAve5),
+         OREBDiff1 = ifelse(ORebPerc > OREBAve1, (ORebPerc-OREBAve1)/OREBAve1, -(OREBAve1-ORebPerc)/OREBAve1),
+         OREBDiff5 = ifelse(ORebPerc > OREBAve5, (ORebPerc-OREBAve5)/OREBAve5, -(OREBAve5-ORebPerc)/OREBAve5),
+         REBDiff1 = ifelse(RebPerc > REBAve1, (RebPerc-REBAve1)/REBAve1, -(REBAve1-RebPerc)/REBAve1),
+         REBDiff5 = ifelse(RebPerc > REBAve5, (RebPerc-REBAve5)/REBAve5, -(REBAve5-RebPerc)/REBAve5)
+  ) %>%
+  select(c(1:4),tail(names(.), 18))

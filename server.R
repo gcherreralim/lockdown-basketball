@@ -1787,7 +1787,7 @@ server <- function(input,output,session){
     
     ggplot(A1set, aes(x = reorder(Metrics, AmountAboveSeasonAverage), y = AmountAboveSeasonAverage, fill = posneg)) +
       geom_bar(stat = "identity", show.legend = F, width = 0.6) +
-      geom_hline(yintercept = 0, color = "#E3BC2C", size = 3) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 1.5) +
       scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
       scale_x_discrete(labels=c("PPGDiff1" = "Points per Game",
                                 "PaceDiff1" = "Pace",
@@ -1798,6 +1798,7 @@ server <- function(input,output,session){
                                 "EFFDiffDiff1" = "Net Efficiency",
                                 "DefRtgDiff1" = "Defensive Rating",
                                 "dEFFDiff1" = "Defensive Efficiency")) +
+      scale_y_continuous(breaks = seq(floor(min(A1set$AmountAboveSeasonAverage)), ceiling(max(A1set$AmountAboveSeasonAverage)), by = 2)) +
       coord_flip() + 
       labs(x = "",
            y = "",
@@ -1811,7 +1812,55 @@ server <- function(input,output,session){
   })
   
   ### Plot Output 2
+  output$WA_subtitleappear2 = renderUI({
+    if(length(selected())>0){
+      textOutput("WA_subtitle2")
+    }
+  })
   
+  output$WA_plotappear2 = renderUI({
+    if(length(selected())>0){
+      plotOutput("WA_plot2")
+    }
+  })
+  
+  output$WA_subtitle2 = renderText({
+    paste0("Percent Above Season Average")
+  })
+  
+    output$WA_plot2 = renderPlot({
+    A2set = genteamsWA_P %>%
+      filter(TeamCode == genteamsWA_P[selected(),]$TeamCode) %>%
+      pivot_longer(cols = c(5,7,9,11,13,15,17,19,21), names_to = "Metrics", values_to = "PercAboveSeasonAverage") %>%
+      select(1:4,tail(names(.),2)) %>%
+      mutate(posneg = ifelse(PercAboveSeasonAverage < 0, "neg", "pos"))
+    
+    ggplot(A2set, aes(x = reorder(Metrics, PercAboveSeasonAverage), y = PercAboveSeasonAverage, fill = posneg)) +
+      geom_bar(stat = "identity", show.legend = F, width = 0.6) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 1.5) +
+      scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
+      scale_x_discrete(labels=c("WPDiff1" = "Win Percentage",
+                                "EWPDiff1" = "Est. Win Percentage",
+                                "EFGDiff1" = "Effective FG%",
+                                "TSDiff1" = "True Shooting %",
+                                "ASTDiff1" = "Assist %",
+                                "TODiff1" = "Turnover %",
+                                "ATDiff1" = "Assist-to-Turnover Ratio",
+                                "OREBDiff1" = "Off. Rebound %",
+                                "REBDiff1" = "Rebound %")) +
+      scale_y_continuous(labels = function(x) scales::percent(x, accuracy = 1),
+                         breaks = seq(floor(min(A2set$PercAboveSeasonAverage)), ceiling(max(A2set$PercAboveSeasonAverage)), by = 0.1)) +
+      coord_flip() + 
+      labs(x = "",
+           y = "",
+           caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") +
+      theme(text = element_text(size = 12),
+            panel.grid.major = element_line(colour = "#E4E4E4"),
+            panel.grid.minor = element_line(color = "#E4E4E4"),
+            panel.background = element_rect(fill = 'white'),
+            axis.ticks = element_blank(),
+            axis.text.y = element_text(face = "bold"))
+  })
   
   ### Plot Output 3
   output$WA_subtitleappear3 = renderUI({
@@ -1831,15 +1880,15 @@ server <- function(input,output,session){
   })
   
   output$WA_plot3 = renderPlot({
-    A1set = genteamsWA_A %>%
+    A3set = genteamsWA_A %>%
       filter(TeamCode == genteamsWA_A[selected(),]$TeamCode) %>%
       pivot_longer(cols = c(6,8,10,12,14,16,18,20,22), names_to = "Metrics", values_to = "AmountAboveWindowAverage") %>%
       select(1:4,tail(names(.),2)) %>%
       mutate(posneg = ifelse(AmountAboveWindowAverage < 0, "neg", "pos"))
     
-    ggplot(A1set, aes(x = reorder(Metrics, AmountAboveWindowAverage), y = AmountAboveWindowAverage, fill = posneg)) +
+    ggplot(A3set, aes(x = reorder(Metrics, AmountAboveWindowAverage), y = AmountAboveWindowAverage, fill = posneg)) +
       geom_bar(stat = "identity", show.legend = F, width = 0.6) +
-      geom_hline(yintercept = 0, color = "#E3BC2C", size = 3) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 1.5) +
       scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
       scale_x_discrete(labels=c("PPGDiff5" = "Points per Game",
                                 "PaceDiff5" = "Pace",
@@ -1850,6 +1899,58 @@ server <- function(input,output,session){
                                 "EFFDiffDiff5" = "Net Efficiency",
                                 "DefRtgDiff5" = "Defensive Rating",
                                 "dEFFDiff5" = "Defensive Efficiency")) +
+      scale_y_continuous(breaks = seq(floor(min(A3set$AmountAboveWindowAverage)), ceiling(max(A3set$AmountAboveWindowAverage)), by = 2)) +
+      coord_flip() + 
+      labs(x = "",
+           y = "",
+           caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") +
+      theme(text = element_text(size = 12),
+            panel.grid.major = element_line(colour = "#E4E4E4"),
+            panel.grid.minor = element_line(color = "#E4E4E4"),
+            panel.background = element_rect(fill = 'white'),
+            axis.ticks = element_blank(),
+            axis.text.y = element_text(face = "bold"))
+  })
+  
+  ### Plot Output 4
+  output$WA_subtitleappear4 = renderUI({
+    if(length(selected())>0){
+      textOutput("WA_subtitle4")
+    }
+  })
+  
+  output$WA_plotappear4 = renderUI({
+    if(length(selected())>0){
+      plotOutput("WA_plot4")
+    }
+  })
+  
+  output$WA_subtitle4 = renderText({
+    paste0("Percent Above 5-Year Average")
+  })
+  
+  output$WA_plot4 = renderPlot({
+    A4set = genteamsWA_P %>%
+      filter(TeamCode == genteamsWA_P[selected(),]$TeamCode) %>%
+      pivot_longer(cols = c(6,8,10,12,14,16,18,20,22), names_to = "Metrics", values_to = "PercentAboveWindowAverage") %>%
+      select(1:4,tail(names(.),2)) %>%
+      mutate(posneg = ifelse(PercentAboveWindowAverage < 0, "neg", "pos"))
+    
+    ggplot(A4set, aes(x = reorder(Metrics, PercentAboveWindowAverage), y = PercentAboveWindowAverage, fill = posneg)) +
+      geom_bar(stat = "identity", show.legend = F, width = 0.6) +
+      geom_hline(yintercept = 0, color = "#E3BC2C", size = 1.5) +
+      scale_fill_manual(values = c(neg = "#AA1A1A", pos = "#31A217")) +
+      scale_x_discrete(labels=c("WPDiff5" = "Win Percentage",
+                                "EWPDiff5" = "Est. Win Percentage",
+                                "EFGDiff5" = "Effective FG%",
+                                "TSDiff5" = "True Shooting %",
+                                "ASTDiff5" = "Assist %",
+                                "TODiff5" = "Turnover %",
+                                "ATDiff5" = "Assist-to-Turnover Ratio",
+                                "OREBDiff5" = "Off. Rebound %",
+                                "REBDiff5" = "Rebound %")) +
+      scale_y_continuous(labels = function(x) scales::percent(x, accuracy = 1),
+                         breaks = seq(floor(min(A4set$PercentAboveWindowAverage)), ceiling(max(A4set$PercentAboveWindowAverage)), by = 0.1)) +
       coord_flip() + 
       labs(x = "",
            y = "",
