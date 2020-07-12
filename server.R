@@ -21,6 +21,10 @@ server <- function(input,output,session){
       filter(TeamCode %in% input$TEteams)
   })
   
+  TE_out2 = reactive({
+    genteams
+  })
+  
   TE_var1 = reactive({
     genteams %>%
       select(!!input$TExaxis)
@@ -38,23 +42,45 @@ server <- function(input,output,session){
   TEChartOut = reactive({
     
     req(input$TExaxis, input$TEyaxis)
-    ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
-                          xmax = max(TE_var1()), ymax = max(TE_var2()), 
-                          color = name, fill = name)) +
-      geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
-      ggrepel::geom_label_repel(aes(label = TeamCode), show.legend = F,
-                                fontface = "bold",
-                                box.padding = unit(0.55, "lines"),
-                                point.padding = unit(0.55, "lines"),
-                                segment.size = 1) +
-      scale_fill_teams(2) +
-      scale_color_teams(1) +
-      theme(text = element_text(color = "#030303",
-                                face = "bold"),
-            panel.grid.major = element_line(colour = "#E4E4E4"),
-            panel.grid.minor = element_line(color = "#E4E4E4"),
-            panel.background = element_rect(fill = 'white'),
-            axis.ticks = element_blank())
+    
+    if (!input$TEall) {
+      ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
+                            xmax = max(TE_var1()), ymax = max(TE_var2()), 
+                            color = name, fill = name)) +
+        geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
+        ggrepel::geom_label_repel(aes(label = TeamCode), show.legend = F,
+                                  fontface = "bold",
+                                  box.padding = unit(0.55, "lines"),
+                                  point.padding = unit(0.55, "lines"),
+                                  segment.size = 1) +
+        scale_fill_teams(2) +
+        scale_color_teams(1) +
+        theme(text = element_text(color = "#030303",
+                                  face = "bold"),
+              panel.grid.major = element_line(colour = "#E4E4E4"),
+              panel.grid.minor = element_line(color = "#E4E4E4"),
+              panel.background = element_rect(fill = 'white'),
+              axis.ticks = element_blank())
+    } else {
+      ggplot(TE_out2(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
+                            xmax = max(TE_var1()), ymax = max(TE_var2()), 
+                            color = name, fill = name)) +
+        geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
+        ggrepel::geom_label_repel(data = TE_out1(),
+                                  aes(label = TeamCode), show.legend = F,
+                                  fontface = "bold",
+                                  box.padding = unit(0.55, "lines"),
+                                  point.padding = unit(0.55, "lines"),
+                                  segment.size = 1) +
+        scale_fill_teams(2) +
+        scale_color_teams(1) +
+        theme(text = element_text(color = "#030303",
+                                  face = "bold"),
+              panel.grid.major = element_line(colour = "#E4E4E4"),
+              panel.grid.minor = element_line(color = "#E4E4E4"),
+              panel.background = element_rect(fill = 'white'),
+              axis.ticks = element_blank())
+    }
   })
   
   
@@ -118,6 +144,7 @@ server <- function(input,output,session){
     updateSelectizeInput(session, 'TEteams', selected = "")
     updateVarSelectInput(session, 'TExaxis', selected = "oEFF")
     updateVarSelectInput(session, 'TEyaxis', selected = "WinPerc")
+    updateCheckboxInput(session, "TEall", value = FALSE)
   })
   
   output$TE_plotdownappear = renderUI({

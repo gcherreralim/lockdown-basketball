@@ -43,6 +43,11 @@ ui <- (
                       text-transform: uppercase;
                       font-weight: 600;
                     }
+                    hr{
+                      height: 4px;
+                      border: none;
+                      background-color: #FFF;
+                    }
                     .btn{
                       background-color: #17408B;
                       border: 3px solid #17408B;
@@ -99,13 +104,29 @@ ui <- (
                     .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
                       background-color: #C9082A;
                       color: #FFF;
+                      border-radius: 0px;
+                      border-color: #C9082A;
+                      font-weight: 600;
                     }
                     .nav-tabs>.active>a, .nav-tabs>.active>a:hover, .nav-tabs>.active>a:focus {
                       border-color: transparent;
+                      font-weight: 600;
                     }
                     .nav-tabs {
-                       border-bottom: 3px solid #d45500;
-                       background-color: #17408B;
+                      border-bottom: 8px solid #062256;
+                      background-color: #17408B;
+                    }
+                    .nav-tabs > li > a{
+                      transition: all 200ms ease-in-out;
+                    }
+                    .nav-tabs > li:hover > a{
+                      background-color: #C9082A;
+                      border-color: transparent;
+                    }
+                    .nav-tabs > li > a{
+                      color: #FFF;
+                      border-radius: 0px;
+                      transition: all 200ms ease-in-out;
                     }
                     ')),
     
@@ -144,6 +165,7 @@ ui <- (
                             shiny::br(),
                             varSelectInput("TExaxis", "X-Axis Variable", genteams[,7:36], selected="oEFF"),
                             varSelectInput("TEyaxis", "Y-Axis Variable", genteams[,7:36], selected="WinPerc"),
+                            checkboxInput("TEall", "Show all teams", FALSE),
                             actionButton("TE_reset", "Reset")),
                mainPanel(width = 10,
                  shiny::textOutput("TEChartTitle"),
