@@ -47,7 +47,7 @@ server <- function(input,output,session){
       ggplot(TE_out1(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
                             xmax = max(TE_var1()), ymax = max(TE_var2()), 
                             color = name, fill = name)) +
-        geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
+        geom_point(shape = 21, size = 4, stroke = 1, show.legend = F) +
         ggrepel::geom_label_repel(aes(label = TeamCode), show.legend = F,
                                   fontface = "bold",
                                   box.padding = unit(0.55, "lines"),
@@ -65,11 +65,12 @@ server <- function(input,output,session){
       ggplot(TE_out2(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
                             xmax = max(TE_var1()), ymax = max(TE_var2()), 
                             color = name, fill = name)) +
-        geom_point(shape = 21, size = 4, stroke = 2, show.legend = F) +
-        ggrepel::geom_label_repel(data = TE_out1(),
+        geom_point(shape = 21, size = 4, stroke = 1, show.legend = F) +
+        ggrepel::geom_label_repel(data = TE_out2() %>%
+                                    filter(TeamCode %in% input$TEteams),
                                   aes(label = TeamCode), show.legend = F,
                                   fontface = "bold",
-                                  box.padding = unit(0.55, "lines"),
+                                  box.padding = unit(2, "lines"),
                                   point.padding = unit(0.55, "lines"),
                                   segment.size = 1) +
         scale_fill_teams(2) +
