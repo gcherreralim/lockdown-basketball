@@ -115,6 +115,7 @@ ui <- (
       
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
       tabPanel("Team Evaluation",
+               h1('title'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "TEteams",
@@ -147,6 +148,7 @@ ui <- (
       
       ########## UI CODE FOR 'PLAY TYPE COMPARISONS' TAB ##########
       tabPanel("Play Type Comparisons",
+               h1('title'),
                # fluidRow(
                #   column(2,
                #          fluidRow(h5("Selected Team")),
@@ -237,6 +239,7 @@ ui <- (
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
+               h1('title'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "MTC_teams",
@@ -289,7 +292,9 @@ ui <- (
 
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
       tabPanel("5-Year Window Analysis",
+               h1('title'),
                h4("Select row to see additional data"),
+               h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
                reactableOutput("WA_Table"),
                downloadButton('WA_tabledownload',"Download the data"),
                hr(),
