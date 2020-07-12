@@ -5,9 +5,9 @@ account: gcherreralim
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2550051
-bundleId: 3381628
+bundleId: 3383604
 url: https://gcherreralim.shinyapps.io/lockdown-basketball/
-when: 1594532859.4834
+when: 1594590225.66685
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: dump.R|NBAData20152016to20192020.csv|trialapp.R

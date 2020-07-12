@@ -65,7 +65,12 @@ server <- function(input,output,session){
       ggplot(TE_out2(), aes(x = !!input$TExaxis, y = !!input$TEyaxis,
                             xmax = max(TE_var1()), ymax = max(TE_var2()), 
                             color = name, fill = name)) +
-        geom_point(shape = 21, size = 4, stroke = 1, show.legend = F) +
+        geom_point(data = TE_out2() %>%
+                     filter(TeamCode %notin% input$TEteams),
+                   shape = 21, size = 4, stroke = 1, show.legend = F, alpha = 0.35) +
+        geom_point(data = TE_out2() %>%
+                     filter(TeamCode %in% input$TEteams),
+                   shape = 21, size = 4, stroke = 1, show.legend = F) +
         ggrepel::geom_label_repel(data = TE_out2() %>%
                                     filter(TeamCode %in% input$TEteams),
                                   aes(label = TeamCode), show.legend = F,

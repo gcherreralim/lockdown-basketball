@@ -254,3 +254,7 @@ genteamsWA_P = genteamsWA_P %>%
          REBDiff5 = ifelse(RebPerc > REBAve5, (RebPerc-REBAve5)/REBAve5, -(REBAve5-RebPerc)/REBAve5)
   ) %>%
   select(c(1:4),tail(names(.), 18))
+
+
+### Creating 'not in' function
+`%notin%` = Negate(`%in%`)

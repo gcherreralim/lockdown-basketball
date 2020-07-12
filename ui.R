@@ -19,6 +19,7 @@ ui <- (
                       margin-left: -0.78vw;
                       font-weight: 500;
                       font-family: "Raleway", sans-serif;
+                      border-color: transparent;
                     }
                     .navbar-default .navbar-brand, .navbar-default .navbar-brand:hover{
                       color: #FFF;
@@ -31,17 +32,20 @@ ui <- (
                       font-size: 10px;
                       color: #FFF;
                       letter-spacing: 1.5px;
+                      border-bottom: 1px solid #17408B;
                       transition: all 200ms ease-in-out;
                     }
                     .navbar-default .navbar-nav>li>a:hover{
                       background-color: #C9082A;
                       color: #FFF;
+                      border-bottom: 1px solid #c9082a;
                     }
                     .navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:focus, .navbar-default .navbar-nav>.active>a:hover {
                       background-color: #C9082A;
                       color: #FFF;
                       text-transform: uppercase;
                       font-weight: 600;
+                      border-bottom: 1px solid #c9082a;
                     }
                     hr{
                       height: 4px;
@@ -128,6 +132,23 @@ ui <- (
                       border-radius: 0px;
                       transition: all 200ms ease-in-out;
                     }
+                    .tooltabtitle {
+                      background-image: url("TE_head.jpg");
+                      width: 125vw;
+                      margin-top: -2vh;
+                      margin-left: -1.55vw;
+                      padding: 40px;
+                      overflow: hidden;
+                      margin-bottom: 2vh;
+                    }
+                    .tooltabtitle > h1, .tooltabtitle > h4{
+                      color: #FFF;
+                      width: 40vw;
+                    }
+                    .tooltabtitle > h1{
+                      text-transform: uppercase;
+                      font-weight: 700;
+                    }
                     ')),
     
     
@@ -136,7 +157,7 @@ ui <- (
     navbarPage(
       selected = "Home",
       title = "NBA Team Comparisons",
-      windowTitle = "NBA Team Comparisons | 2019-20 Season",
+      windowTitle = "NBA Team Comparisons 2019-20 | Lockdown Basketball",
       
       ########## UI CODE FOR 'HOME' TAB ##########
       tabPanel("Home",
@@ -147,8 +168,11 @@ ui <- (
       
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
       tabPanel("Team Evaluation",
-               h1('title'),
-               h2('subtitle'),
+               div(
+                h1('Team Evaluation'),
+                h4('This tool allows the user to graph up to ten teams against each other on a simple X-Y scatter plot based on any two variables of their choosing. 
+                  The user can also choose to show all other teams in the data, while still distinguishing the already chosen teams.'),
+                class = "tooltabtitle", id = 'TE_tooltitle'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "TEteams",
@@ -182,8 +206,12 @@ ui <- (
       
       ########## UI CODE FOR 'PLAY TYPE COMPARISONS' TAB ##########
       tabPanel("Play Type Comparisons",
-               h1('title'),
-               h2('subtitle'),
+               div(
+                 h1('Play Type Comparisons'),
+                 h4('This tool is designed to help locate and identify teams of a similar profile over the last five regular seasons using publicly available NBA tracking data. 
+                  The first three tabs visualize a K-Nearest Neighbor analysis that nets you the five closest teams within the selected parameters. The last three tabs display
+                  relevant play type data for each of the teams identified as closest matches, including statistics for each play type.'),
+                 class = "tooltabtitle", id = 'PTC_tooltitle'),
                # fluidRow(
                #   column(2,
                #          fluidRow(h5("Selected Team")),
@@ -274,8 +302,11 @@ ui <- (
 
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
-               h1('title'),
-               h2('subtitle'),
+               div(
+                 h1('Multiple Team Playtype Comparisons'),
+                 h4('Much like the Playtype Comparison Tab, this tool will similarly create spider charts related to frequency, efficiency, and percentile 
+                    via the 10 main playtypes. The user has the option to select up to five teams and overlay these offensive and defensive profiles to their preference.'),
+                 class = "tooltabtitle", id = 'MTC_tooltitle'),
                sidebarPanel(width = 2,
                             selectizeInput(
                               inputId = "MTC_teams",
@@ -328,8 +359,11 @@ ui <- (
 
       # ########## UI CODE FOR '5-YEAR WINDOW ANALYSIS' TAB ##########
       tabPanel("5-Year Window Analysis",
-               h1('title'),
-               h2('subtitle'),
+               div(
+                 h1('5-Year Window Analysis'),
+                 h4('This tool allows users to pick any team from any season and look at how they compared across all of the variables in our team evaluation tool, both against 
+                    season average and average over the "five-year" window.'),
+                 class = "tooltabtitle", id = 'MTC_tooltitle'),
                h4("Select row to see additional data"),
                h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
                reactableOutput("WA_Table"),
