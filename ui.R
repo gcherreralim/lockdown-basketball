@@ -133,13 +133,16 @@ ui <- (
                       transition: all 200ms ease-in-out;
                     }
                     .tooltabtitle {
-                      background-image: url("TE_head.jpg");
-                      width: 125vw;
+                      background: #030303;
+                      width: 105vw;
                       margin-top: -2vh;
                       margin-left: -1.55vw;
                       padding: 40px;
                       overflow: hidden;
                       margin-bottom: 2vh;
+                      background-size: cover;
+                      background-repeat: no-repeat;
+                      background-position: right;
                     }
                     .tooltabtitle > h1, .tooltabtitle > h4{
                       color: #FFF;
@@ -148,6 +151,25 @@ ui <- (
                     .tooltabtitle > h1{
                       text-transform: uppercase;
                       font-weight: 700;
+                      letter-spacing: 2px;
+                      font-size: 32px;
+                    }
+                    .tooltabtitle > h4{
+                      font-size: 12px;
+                      text-align: justify;
+                      text-align-last: left;
+                    }
+                    #TE_tooltitle{
+                      background-image: url("TE_head.jpg");
+                    }
+                    #PTC_tooltitle{
+                      background-image: url("PTC_head.jpg");
+                    }
+                    #WA_tooltitle{
+                      background-image: url("WA_head.jpg");
+                    }
+                    #MTC_tooltitle{
+                      background-image: url("MTC_head.jpg");
                     }
                     ')),
     
@@ -171,7 +193,7 @@ ui <- (
                div(
                 h1('Team Evaluation'),
                 h4('This tool allows the user to graph up to ten teams against each other on a simple X-Y scatter plot based on any two variables of their choosing. 
-                  The user can also choose to show all other teams in the data, while still distinguishing the already chosen teams.'),
+                  The user can also choose to show all other teams in the data, while still labeling the already chosen teams.'),
                 class = "tooltabtitle", id = 'TE_tooltitle'),
                sidebarPanel(width = 2,
                             selectizeInput(
@@ -303,8 +325,8 @@ ui <- (
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
                div(
-                 h1('Multiple Team Playtype Comparisons'),
-                 h4('Much like the Playtype Comparison Tab, this tool will similarly create spider charts related to frequency, efficiency, and percentile 
+                 h1('Multiple Team Play type Comparisons'),
+                 h4('Much like the Play Type Comparison Tab, this tool will similarly create spider charts related to frequency, efficiency, and percentile 
                     via the 10 main playtypes. The user has the option to select up to five teams and overlay these offensive and defensive profiles to their preference.'),
                  class = "tooltabtitle", id = 'MTC_tooltitle'),
                sidebarPanel(width = 2,
@@ -363,7 +385,7 @@ ui <- (
                  h1('5-Year Window Analysis'),
                  h4('This tool allows users to pick any team from any season and look at how they compared across all of the variables in our team evaluation tool, both against 
                     season average and average over the "five-year" window.'),
-                 class = "tooltabtitle", id = 'MTC_tooltitle'),
+                 class = "tooltabtitle", id = 'WA_tooltitle'),
                h4("Select row to see additional data"),
                h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
                reactableOutput("WA_Table"),
