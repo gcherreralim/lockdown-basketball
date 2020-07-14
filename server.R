@@ -169,23 +169,23 @@ server <- function(input,output,session){
     }
   )
   
-  output$TE_tabdownappear = renderUI({
-    if(length(input$TEteams)>=2){
-      downloadButton('TE_tabledownload',"Download the data")
-    }
-  })
-  
-  output$TE_tabledownload <- downloadHandler(
-    filename = function() {
-      paste0(as.character(input$TExaxis),"-",as.character(input$TEyaxis),' Comparisons (',paste(input$TEteams,collapse=","), ').csv')
-    },
-    content = function(file) {
-      TEtabledown1 = TE_out1() %>%
-        select(-Team, -Season, -EstWinPerc, -ProjWinPerc, -AchLevel, -Playoff, -name, -primary, -secondary)
-      
-      write.csv(TEtabledown1, file, row.names = FALSE)
-    }
-  )
+  # output$TE_tabdownappear = renderUI({
+  #   if(length(input$TEteams)>=2){
+  #     downloadButton('TE_tabledownload',"Download the data")
+  #   }
+  # })
+  # 
+  # output$TE_tabledownload <- downloadHandler(
+  #   filename = function() {
+  #     paste0(as.character(input$TExaxis),"-",as.character(input$TEyaxis),' Comparisons (',paste(input$TEteams,collapse=","), ').csv')
+  #   },
+  #   content = function(file) {
+  #     TEtabledown1 = TE_out1() %>%
+  #       select(-Team, -Season, -EstWinPerc, -ProjWinPerc, -AchLevel, -Playoff, -name, -primary, -secondary)
+  #     
+  #     write.csv(TEtabledown1, file, row.names = FALSE)
+  #   }
+  # )
   
   ############## SERVER CODE FOR 'PLAY TYPE COMPARISONS' TAB ################
   # Selected Team - Eff
@@ -1920,7 +1920,7 @@ server <- function(input,output,session){
   
   output$WA_Table = renderReactable({
     reactable(WA_maintab(),
-              sortable = TRUE, filterable = TRUE, searchable = TRUE, pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50),
+              sortable = TRUE, filterable = TRUE, searchable = FALSE, pagination = TRUE, defaultPageSize = 10, showPageSizeOptions = TRUE, pageSizeOptions = c(10,20,30,50),
               paginationType = "numbers", selection = "single", onClick = "select", selectionId = "WA_tabselect", striped = FALSE, showSortIcon = FALSE, highlight = TRUE,
               theme = reactableTheme(
                 rowSelectedStyle = list(backgroundColor = "rgba(23,64,139,0.9)", color = "#FFF", fontWeight = "600", boxShadow = "inset 4px 0 0 0 #C9082A")
@@ -1955,7 +1955,7 @@ server <- function(input,output,session){
   ### Plot Output 1
   output$WA_titleappear1 = renderUI({
     if(length(selected())>0){
-      textOutput("WA_title1")
+      htmlOutput("WA_title1")
     }
   })
   
@@ -1972,7 +1972,7 @@ server <- function(input,output,session){
   })
   
   output$WA_title1 = renderText({
-    paste0(genteamsWA_A[selected(),]$Team, " (", genteamsWA_A[selected(),]$SeasonRange,")")
+    paste0('<span style=\"color:',nbacolors[nbacolors$abbrev==genteamsWA_A[selected(),]$Team,]$primary,'; background-color:',nbacolors[nbacolors$abbrev==genteamsWA_A[selected(),]$Team,]$secondary,';border-radius: 5px; padding: 5px; margin-top: 10px;\">',genteamsWA_A[selected(),]$Team, " (", genteamsWA_A[selected(),]$SeasonRange,")",'</span>')
   })
   
   output$WA_subtitle1 = renderText({

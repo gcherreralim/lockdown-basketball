@@ -12,11 +12,12 @@ ui <- (
                     body{
                       font-family: "Open Sans", sans-serif;
                       font-size: 12px;
+                      overflow-x: hidden;
                     }
                     .navbar{
                       background-color: #17408B;
-                      width: 100vw;
-                      margin-left: -0.78vw;
+                      width: 103vw;
+                      margin-left: -0.8vw;
                       font-weight: 500;
                       font-family: "Raleway", sans-serif;
                       border-color: transparent;
@@ -134,11 +135,10 @@ ui <- (
                     }
                     .tooltabtitle {
                       background: #030303;
-                      width: 105vw;
+                      width: 104vw;
                       margin-top: -2vh;
                       margin-left: -1.65vw;
                       padding: 40px;
-                      overflow: hidden;
                       margin-bottom: 2vh;
                       background-size: cover;
                       background-repeat: no-repeat;
@@ -186,6 +186,95 @@ ui <- (
                       margin-left: auto;
                       margin-right: auto;
                     }
+                    #WA_title1{
+                      margin: 0 auto;
+                    }
+                    .MTC_plottitle > h5{
+                      text-transform: uppercase;
+                      font-weight: 800;
+                      letter-spacing: 1px;
+                      text-align: center;
+                    }
+                    .shiny-output-error-validation,
+                    .htmlwidgets-error{
+                      color: #C9082A;
+                      font-size: 13px;
+                      text-align: center;
+                    }
+                    #TEChartTitle{
+                      font-size: 18px;
+                      font-weight: 700;
+                      text-align: center;
+                    }
+                    #WA_title1,
+                    #WA_subtitle1,
+                    #WA_subtitle2,
+                    #WA_subtitle3,
+                    #WA_subtitle4{
+                      text-align: center;
+                    }
+                    #WA_title1{
+                      font-size: 16px;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      margin-top: 10px;
+                      margin-bottom: 5px;
+                    }
+                    #WA_subtitle1,
+                    #WA_subtitle2,
+                    #WA_subtitle3,
+                    #WA_subtitle4{
+                      font-size: 12px;
+                      font-weight: 700;
+                      text-transform: uppercase;
+                      color: #030303;
+                    }
+                    #tab-2846-5 > h4,
+                    #tab-2846-5 > h6{
+                      font-size: 14px
+                    }
+                    .PTCteamtitle{
+                      font-weight: 600;
+                      text-transform: uppercase;
+                      font-size: 14px;
+                      color: #FFF;
+                      background-color: #062256;
+                      padding: 5px;
+                      border-radius: 5px;
+                      text-align: center;
+                    }
+                    #PPPselectedteam > img,
+                    #FREQselectedteam > img,
+                    #PERCselectedteam > img,
+                    #EDselectedteam > img,
+                    #FDselectedteam > img,
+                    #PDselectedteam > img{
+                      margin-left: auto;
+                      margin-right: auto;
+                      display: block;
+                    }
+                    #WAtabsub > h4,
+                    #WAtabsub > h6{
+                      font-size: 12px;
+                      text-align: center;
+                      font-weight: 700;
+                      color: #030303;
+                    }
+                    .matchcenter{
+                      text-align: center;
+                    }
+                    .matchcenter > div{
+                      margin-left: auto;
+                      margin-right: auto;
+                      display: block;
+                    }
+                    #main-text{
+                      font-size: 25px;
+                    }
+                    #homepage{
+                      margin-left:-2.5vw;
+                      margin-top: -50px;
+                    }
                     ')),
     
     
@@ -199,8 +288,8 @@ ui <- (
       ########## UI CODE FOR 'HOME' TAB ##########
       tabPanel("Home",
                mainPanel(
-                 #includeHTML("html_pages/home.html"),
-                 h1("Hello")
+                 div(id="homepage",
+                 includeHTML("html_pages/home.html"))
                )),
       
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
@@ -234,9 +323,7 @@ ui <- (
                  reactable::reactableOutput("TEtable"),
                  br(),
                  br(),
-                 div(style="display: inline-block; vertical-align: top; width: 200px; margin: 0 auto;",uiOutput("TE_plotdownappear")),
-                 div(style="display: inline-block; vertical-align: top; width: 200px; margin: 0 auto; padding: 0px 20px;",uiOutput("TE_tabdownappear")),
-                 br(),
+                 div(style="display: inline-block; vertical-align: top; width: 200px; margin: 0 auto;",uiOutput("TE_plotdownappear"))
                ))
       ,
       
@@ -287,6 +374,7 @@ ui <- (
                                                uiOutput("PPPselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("PPPteam1")),
@@ -298,7 +386,7 @@ ui <- (
                                                         uiOutput("PPPteam4")),
                                                  column(2,
                                                         uiOutput("PPPteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       plotly::plotlyOutput("PTC_PPPplot",
                                                    height = "500px",
@@ -312,6 +400,7 @@ ui <- (
                                                uiOutput("FREQselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("FREQteam1")),
@@ -323,7 +412,7 @@ ui <- (
                                                         uiOutput("FREQteam4")),
                                                  column(2,
                                                         uiOutput("FREQteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       plotly::plotlyOutput("PTC_FREQplot",
                                                    height = "500px",
@@ -337,6 +426,7 @@ ui <- (
                                                uiOutput("PERCselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("PERCteam1")),
@@ -348,7 +438,7 @@ ui <- (
                                                         uiOutput("PERCteam4")),
                                                  column(2,
                                                         uiOutput("PERCteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       plotly::plotlyOutput("PTC_PERCplot",
                                                            height = "500px",
@@ -362,6 +452,7 @@ ui <- (
                                                uiOutput("EDselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("EDteam1")),
@@ -373,7 +464,7 @@ ui <- (
                                                         uiOutput("EDteam4")),
                                                  column(2,
                                                         uiOutput("EDteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Efficiency' tab."),
                                       reactable::reactableOutput("PTC_PPPtable2"),
@@ -386,6 +477,7 @@ ui <- (
                                                uiOutput("FDselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("FDteam1")),
@@ -397,7 +489,7 @@ ui <- (
                                                         uiOutput("FDteam4")),
                                                  column(2,
                                                         uiOutput("FDteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Frequency' tab."),
                                       reactable::reactableOutput("PTC_FREQtable2"),
@@ -410,6 +502,7 @@ ui <- (
                                                uiOutput("PDselectedteam")),
                                         column(10,
                                                h5("Matched Teams:", class = "PTCteamtitle"),
+                                               div(class="matchcenter",
                                                fluidRow(
                                                  column(2,
                                                         uiOutput("PDteam1")),
@@ -421,7 +514,7 @@ ui <- (
                                                         uiOutput("PDteam4")),
                                                  column(2,
                                                         uiOutput("PDteam5"))
-                                               ))),
+                                               )))),
                                       hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
                                       reactable::reactableOutput("PTC_PERCtable2"),
@@ -431,7 +524,7 @@ ui <- (
       # ########## UI CODE FOR 'MULTIPLE TEAM PLAYTYPE COMPARISONS' TAB ##########
       tabPanel("Multiple Team Comparisons",
                div(
-                 h1('Multiple Team Play type Comparisons'),
+                 h1('Multiple Team Comparisons'),
                  h4('Much like the Play Type Comparison Tab, this tool will similarly create spider charts related to frequency, efficiency, and percentile 
                     via the 10 main playtypes. The user has the option to select up to five teams and overlay these offensive and defensive profiles to their preference.'),
                  class = "tooltabtitle", id = 'MTC_tooltitle'),
@@ -452,16 +545,15 @@ ui <- (
                mainPanel(width = 10,
                          fluidRow(
                            column(12,
-                                  h3("Multiple Team Playtype Comparisons"),
                                   fluidRow(
                                     column(4,
-                                           "Offensive Frequency (%)",
+                                           div(h5("Offensive Frequency (%)"), class = "MTC_plottitle"),
                                            plotly::plotlyOutput("MTC_OffFreqPlot")),
                                     column(4,
-                                           "Offensive Efficiency",
+                                           div(h5("Offensive Efficiency (PPP)"), class = "MTC_plottitle"),
                                            plotly::plotlyOutput("MTC_OffEffPlot")),
                                     column(4,
-                                           "Offensive Percentile",
+                                           div(h5("Offensive Percentile"), class = "MTC_plottitle"),
                                            plotly::plotlyOutput("MTC_OffPercPlot"))
                                   ))),
                          fluidRow(
@@ -469,13 +561,13 @@ ui <- (
                                   shiny::br(),
                                   fluidRow(
                                     column(4,
-                                           "Defensive Frequency (%)",
+                                           div(h5("Defensive Frequency (%)"), class = "MTC_plottitle"),
                                            plotly::plotlyOutput("MTC_DefFreqPlot")),
                                     column(4,
-                                           "Defensive Efficiency",
+                                           div(h5("Defensive Efficiency (PPP)"), class = "MTC_plottitle"),
                                            plotly::plotlyOutput("MTC_DefEffPlot")),
                                     column(4,
-                                           "Defensive Percentile",
+                                           div(h5("Defensive Percentile"), class = "MTC_plottitle"),
                                            plotlyOutput("MTC_DefPercPlot")))
                                   )),
                          h5("Double click a team name in each graph's legend to display all teams. Note that graphs will overlap."),
@@ -492,26 +584,28 @@ ui <- (
                  h4('This tool allows users to pick any team from any season and look at how they compared across all of the variables in our team evaluation tool, both against 
                     season average and average over the "five-year" window.'),
                  class = "tooltabtitle", id = 'WA_tooltitle'),
-               h4("Select row to see additional data"),
-               h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
                reactableOutput("WA_Table"),
-               downloadButton('WA_tabledownload',"Download the data"),
+               div(id="WAtabsub",
+               h4("Select row above to see additional data"),
+               h6('Defensive stats (Opponent PPG, Defensive Rating, Defensive Efficiency) are marked as positive (green) if they are below average, as lower numbers on defensive stats indicate better performance on the defensive end.'),
+               ),
                hr(),
-               uiOutput("WA_titleappear1"),
-               fluidRow(
-                 column(3,
-                        uiOutput("WA_subtitleappear1"),
-                        uiOutput("WA_plotappear1")),
-                 column(3,
-                        uiOutput("WA_subtitleappear2"),
-                        uiOutput("WA_plotappear2")),
-                 column(3,
-                        uiOutput("WA_subtitleappear3"),
-                        uiOutput("WA_plotappear3")),
-                 column(3,
-                        uiOutput("WA_subtitleappear4"),
-                        uiOutput("WA_plotappear4"))
-               )
+               div(class="WAplots",
+                 uiOutput("WA_titleappear1"),
+                 fluidRow(
+                   column(3,
+                          uiOutput("WA_subtitleappear1"),
+                          uiOutput("WA_plotappear1")),
+                   column(3,
+                          uiOutput("WA_subtitleappear2"),
+                          uiOutput("WA_plotappear2")),
+                   column(3,
+                          uiOutput("WA_subtitleappear3"),
+                          uiOutput("WA_plotappear3")),
+                   column(3,
+                          uiOutput("WA_subtitleappear4"),
+                          uiOutput("WA_plotappear4"))
+               ))
                ),
 
 
