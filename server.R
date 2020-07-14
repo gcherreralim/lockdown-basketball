@@ -372,6 +372,174 @@ server <- function(input,output,session){
     }
   })
   
+  ### Images
+  # Selected Team - PPP
+  output$PPPselectedteam = renderUI({
+    tags$img(src = paste0(PTCteameff()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - PPP
+  output$PPPteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PPPteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PPPteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PPPteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PPPteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Selected Team - FREQ
+  output$FREQselectedteam = renderUI({
+    tags$img(src = paste0(PTCteamfreq()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - FREQ
+  output$FREQteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FREQteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FREQteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FREQteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FREQteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Selected Team - PERC
+  output$PERCselectedteam = renderUI({
+    tags$img(src = paste0(PTCteamperc()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - PERC
+  output$PERCteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PERCteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PERCteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PERCteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PERCteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Selected Team - ED
+  output$EDselectedteam = renderUI({
+    tags$img(src = paste0(PTCteameff()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - ED
+  output$EDteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$EDteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$EDteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$EDteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$EDteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_e()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Selected Team - FD
+  output$FDselectedteam = renderUI({
+    tags$img(src = paste0(PTCteamfreq()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - FD
+  output$FDteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FDteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FDteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FDteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$FDteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_f()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Selected Team - PD
+  output$PDselectedteam = renderUI({
+    tags$img(src = paste0(PTCteamperc()$TeamCode,".jpg"),
+             height = "150px")
+  })
+  
+  # Matches - PD
+  output$PDteam1 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[2,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PDteam2 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[3,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PDteam3 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[4,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PDteam4 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[5,]$TeamCode,".jpg"),
+             height = "150px")
+  })
+  output$PDteam5 = renderUI({
+    tags$img(src = paste0(PTC_match_p()[6,]$TeamCode,".jpg"),
+             height = "150px")
+  })
   
   ### Graph
   # Eff Plot

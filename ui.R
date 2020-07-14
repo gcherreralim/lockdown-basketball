@@ -136,7 +136,7 @@ ui <- (
                       background: #030303;
                       width: 105vw;
                       margin-top: -2vh;
-                      margin-left: -1.55vw;
+                      margin-left: -1.65vw;
                       padding: 40px;
                       overflow: hidden;
                       margin-bottom: 2vh;
@@ -170,6 +170,21 @@ ui <- (
                     }
                     #MTC_tooltitle{
                       background-image: url("MTC_head.jpg");
+                    }
+                    #PTC_PPPplot{
+                      display: block;
+                      margin-left: auto;
+                      margin-right: auto;
+                    }
+                    #PTC_FREQplot{
+                      display: block;
+                      margin-left: auto;
+                      margin-right: auto;
+                    }
+                    #PTC_PERCplot{
+                      display: block;
+                      margin-left: auto;
+                      margin-right: auto;
                     }
                     ')),
     
@@ -234,26 +249,6 @@ ui <- (
                   The first three tabs visualize a K-Nearest Neighbor analysis that nets you the five closest teams within the selected parameters. The last three tabs display
                   relevant play type data for each of the teams identified as closest matches, including statistics for each play type.'),
                  class = "tooltabtitle", id = 'PTC_tooltitle'),
-               # fluidRow(
-               #   column(2,
-               #          fluidRow(h5("Selected Team")),
-               #          fluidRow(uiOutput("PTCselectedteam"))),
-               #   column(10,
-               #          fluidRow(h5("Matched Teams:")),
-               #          fluidRow(
-               #            column(1,
-               #                   uiOutput("PTC_team1")),
-               #            column(1,
-               #                   uiOutput("PTC_team2")),
-               #            column(1,
-               #                   uiOutput("PTC_team3")),
-               #            column(1,
-               #                   uiOutput("PTC_team3")),
-               #            column(1,
-               #                   uiOutput("PTC_team4")),
-               #            column(1,
-               #                   uiOutput("PTC_team5"))))),
-               # br(),
                sidebarLayout(
                  sidebarPanel(width = 2,
                               h5("SELECT A TEAM:"),
@@ -285,38 +280,149 @@ ui <- (
                               actionButton("PTC_reset", "Reset")),
                  mainPanel(width = 10,
                            tabsetPanel(
-                             tabPanel("Playtype Efficiency",
-                                      h3("Points Per Possession"),
+                             tabPanel("Playtype Efficiency (PPP)",
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("PPPselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("PPPteam1")),
+                                                 column(2,
+                                                        uiOutput("PPPteam2")),
+                                                 column(2,
+                                                        uiOutput("PPPteam3")),
+                                                 column(2,
+                                                        uiOutput("PPPteam4")),
+                                                 column(2,
+                                                        uiOutput("PPPteam5"))
+                                               ))),
+                                      hr(),
                                       plotly::plotlyOutput("PTC_PPPplot",
                                                    height = "500px",
                                                    width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PPPtable")),
                              tabPanel("Playtype Frequency",
-                                      h3("Frequency"),
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("FREQselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("FREQteam1")),
+                                                 column(2,
+                                                        uiOutput("FREQteam2")),
+                                                 column(2,
+                                                        uiOutput("FREQteam3")),
+                                                 column(2,
+                                                        uiOutput("FREQteam4")),
+                                                 column(2,
+                                                        uiOutput("FREQteam5"))
+                                               ))),
+                                      hr(),
                                       plotly::plotlyOutput("PTC_FREQplot",
                                                    height = "500px",
                                                    width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_FREQtable")),
                              tabPanel("Playtype Percentile",
-                                      h3("Percentile"),
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("PERCselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("PERCteam1")),
+                                                 column(2,
+                                                        uiOutput("PERCteam2")),
+                                                 column(2,
+                                                        uiOutput("PERCteam3")),
+                                                 column(2,
+                                                        uiOutput("PERCteam4")),
+                                                 column(2,
+                                                        uiOutput("PERCteam5"))
+                                               ))),
+                                      hr(),
                                       plotly::plotlyOutput("PTC_PERCplot",
                                                            height = "500px",
                                                            width = "700px"),
                                       shiny::hr(),
                                       reactable::reactableOutput("PTC_PERCtable")),
                              tabPanel("Efficiency Data",
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("EDselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("EDteam1")),
+                                                 column(2,
+                                                        uiOutput("EDteam2")),
+                                                 column(2,
+                                                        uiOutput("EDteam3")),
+                                                 column(2,
+                                                        uiOutput("EDteam4")),
+                                                 column(2,
+                                                        uiOutput("EDteam5"))
+                                               ))),
+                                      hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Efficiency' tab."),
                                       reactable::reactableOutput("PTC_PPPtable2"),
                                       hr(),
                                       downloadButton('PTC_PPPtabledownload2',"Download data")),
                              tabPanel("Frequency Data",
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("FDselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("FDteam1")),
+                                                 column(2,
+                                                        uiOutput("FDteam2")),
+                                                 column(2,
+                                                        uiOutput("FDteam3")),
+                                                 column(2,
+                                                        uiOutput("FDteam4")),
+                                                 column(2,
+                                                        uiOutput("FDteam5"))
+                                               ))),
+                                      hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Frequency' tab."),
                                       reactable::reactableOutput("PTC_FREQtable2"),
                                       hr(),
                                       downloadButton('PTC_FREQtabledownload2',"Download data")),
                              tabPanel("Percentile Data",
+                                      fluidRow(
+                                        column(2,
+                                               h5("Selected Team:", class = "PTCteamtitle"),
+                                               uiOutput("PDselectedteam")),
+                                        column(10,
+                                               h5("Matched Teams:", class = "PTCteamtitle"),
+                                               fluidRow(
+                                                 column(2,
+                                                        uiOutput("PDteam1")),
+                                                 column(2,
+                                                        uiOutput("PDteam2")),
+                                                 column(2,
+                                                        uiOutput("PDteam3")),
+                                                 column(2,
+                                                        uiOutput("PDteam4")),
+                                                 column(2,
+                                                        uiOutput("PDteam5"))
+                                               ))),
+                                      hr(),
                                       h6("These are the playtype (all 10) numbers for the teams matched in the 'Playtype Percentile' tab."),
                                       reactable::reactableOutput("PTC_PERCtable2"),
                                       hr(),
