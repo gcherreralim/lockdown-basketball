@@ -716,12 +716,12 @@ ui <- (
                         NBA Summer League, specializing in both video/scouting and salary cap. He is actively seeking work in professional or collegiate men's or women's basketball on the analytics 
                         or operations side.", id="brett-text"),
                      h5(id="brett-links",
-                        tags$a(href="www.twitter.com/KornHoops", "@KornHoops"),
+                        tags$a(href="https://www.twitter.com/KornHoops", "@KornHoops"),
                         br(),
                         br(),
                         tags$a(href="mailto:brettkornfeld@gmail.com", "E-mail Brett!")),
                      hr(),
-                     img(src="gabby-pic.jpg", id="gabby-pic"),
+                     img(src="gabby-pic.JPG", id="gabby-pic"),
                      h1("Gabby Herrera-Lim (design/app)", id="gabby-head"),
                      h3("Gabby graduated with degrees in Business Analytics (MS, University of Notre Dame) and Business Administration (BS, University of the Philippines, Diliman). He is currently an
                         economic analyst at the Asian Development Bank in the Philippines. In his spare time, he loves talking sports (especially basketball), designing content and apps, binging shows, 
