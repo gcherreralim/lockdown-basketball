@@ -312,14 +312,16 @@ ui <- (
                     }
                     #homepage > h5 > a,
                     #brett-links>a,
-                    #gabby-links>a{
+                    #gabby-links>a,
+                    #joe-link{
                       color: #FFF;
                       text-decoration: none;
                       transition: all 350ms ease-in-out;
                     }
                     #homepage > h5 > a:hover,
                     #brett-links>a:hover,
-                    #gabby-links>a:hover{
+                    #gabby-links>a:hover,
+                    #joe-link:hover{
                       color: #C9082A;
                     }
                     #brett-links,
@@ -377,7 +379,7 @@ ui <- (
                  #includeHTML("html_pages/home.html")
                  img(src="home-head.jpg", id="main-image"),
                  h1("LOCKDOWN BASKETBALL: NBA TEAM COMPS", id="main-head"),
-                 h3("Inspired by a friend’s sports analytics final project, we set out to dive deeper into the similarities between NBA teams over the last five years.
+                 h3("Inspired by a ",tags$a(href="http://ncaa.joejenks.com", target="_blank", "friend’s sports analytics final project", id="joe-link"),", we set out to dive deeper into the similarities between NBA teams over the last five years.
                       The tools in this application will hopefully be both useful and entertaining in comparing multiple iterations of organizations and identifying trends across the NBA.
                       All of our data is regular season data, collected from both NBA.com/stats as well as NBAstuffer.com. We will be making updates that will include playoff data once
                       the 2019-2020 NBA season has fully concluded.", id="main-text"),
