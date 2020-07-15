@@ -1217,8 +1217,7 @@ server <- function(input,output,session){
   # Full Tables
   playtypeMatchEff = reactive({
     playtypes %>%
-    filter(TeamCode %in% PTC_match_e()$TeamCode) %>%
-      filter((Team != input$PTC_team)&(Season != input$PTC_season))
+    filter(TeamCode %in% PTC_match_e()$TeamCode) 
   })
   
   output$PTC_PPPtable2 = renderReactable({
@@ -1247,8 +1246,7 @@ server <- function(input,output,session){
   
   playtypeMatchFreq = reactive({
     playtypes %>%
-      filter(TeamCode %in% PTC_match_f()$TeamCode) %>%
-      filter((Team != input$PTC_team)&(Season != input$PTC_season))
+      filter(TeamCode %in% PTC_match_f()$TeamCode)
   })
   
   output$PTC_FREQtable2 = renderReactable({
@@ -1276,8 +1274,7 @@ server <- function(input,output,session){
 
   playtypeMatchPerc = reactive({
     playtypes %>%
-      filter(TeamCode %in% PTC_match_p()$TeamCode) %>%
-      filter((Team != input$PTC_team)&(Season != input$PTC_season))
+      filter(TeamCode %in% PTC_match_p()$TeamCode)
   })
 
   output$PTC_PERCtable2 = renderReactable({
