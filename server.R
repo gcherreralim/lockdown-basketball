@@ -55,6 +55,7 @@ server <- function(input,output,session){
                                   segment.size = 1) +
         scale_fill_teams(2) +
         scale_color_teams(1) +
+        labs(caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") + 
         theme(text = element_text(color = "#030303",
                                   face = "bold"),
               panel.grid.major = element_line(colour = "#E4E4E4"),
@@ -80,6 +81,7 @@ server <- function(input,output,session){
                                   segment.size = 1) +
         scale_fill_teams(2) +
         scale_color_teams(1) +
+        labs(caption = "Brett Kornfeld   |   Gabby Herrera-Lim   |   Source: NBAstuffer") + 
         theme(text = element_text(color = "#030303",
                                   face = "bold"),
               panel.grid.major = element_line(colour = "#E4E4E4"),
@@ -630,7 +632,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_effplot
       
     } else {
@@ -705,7 +712,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_effplot
     }
   })
@@ -843,7 +855,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_freqplot
       
     } else {
@@ -918,7 +935,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_freqplot
     }
   })
@@ -1055,7 +1077,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_percplot
       
     } else {
@@ -1131,7 +1158,12 @@ server <- function(input,output,session){
               tickfont = list(size = 11)),
             angularaxis = list(tickfont = list(size = 11))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       PTC_percplot
       
     }
@@ -1424,7 +1456,12 @@ server <- function(input,output,session){
               tickfont = list(size = 9)),
             angularaxis = list(tickfont = list(size = 8))),
           showlegend = TRUE,
-          legend = list(font = list(size = 10)))
+          legend = list(font = list(size = 10)),
+          annotations = 
+            list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+                 showarrow = F, xref='paper', yref='paper', 
+                 xanchor='right', yanchor='auto', xshift=0, yshift=0,
+                 font=list(size=11, color="black")))
       MTC_oe_plot
   })
   
@@ -1511,7 +1548,12 @@ server <- function(input,output,session){
             tickfont = list(size = 9)),
           angularaxis = list(tickfont = list(size = 8))),
         showlegend = TRUE,
-        legend = list(font = list(size = 10)))
+        legend = list(font = list(size = 10)),
+        annotations = 
+          list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=11, color="black")))
     MTC_de_plot
   })
   
@@ -1598,7 +1640,12 @@ server <- function(input,output,session){
             tickfont = list(size = 9)),
           angularaxis = list(tickfont = list(size = 8))),
         showlegend = TRUE,
-        legend = list(font = list(size = 10)))
+        legend = list(font = list(size = 10)),
+        annotations = 
+          list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=11, color="black")))
     MTC_of_plot
   })
   
@@ -1685,7 +1732,12 @@ server <- function(input,output,session){
             tickfont = list(size = 9)),
           angularaxis = list(tickfont = list(size = 8))),
         showlegend = TRUE,
-        legend = list(font = list(size = 10)))
+        legend = list(font = list(size = 10)),
+        annotations = 
+          list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=11, color="black")))
     MTC_df_plot
   })
   
@@ -1772,7 +1824,12 @@ server <- function(input,output,session){
             tickfont = list(size = 9)),
           angularaxis = list(tickfont = list(size = 8))),
         showlegend = TRUE,
-        legend = list(font = list(size = 10)))
+        legend = list(font = list(size = 10)),
+        annotations = 
+          list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=11, color="black")))
     MTC_op_plot
   })
   
@@ -1859,7 +1916,12 @@ server <- function(input,output,session){
             tickfont = list(size = 9)),
           angularaxis = list(tickfont = list(size = 8))),
         showlegend = TRUE,
-        legend = list(font = list(size = 10)))
+        legend = list(font = list(size = 10)),
+        annotations = 
+          list(x = 1, y = -0.1, text = "Brett Kornfeld  |  Gabby Herrera-Lim  |  Source: stats.nba.com", 
+               showarrow = F, xref='paper', yref='paper', 
+               xanchor='right', yanchor='auto', xshift=0, yshift=0,
+               font=list(size=11, color="black")))
     MTC_dp_plot
   })
   

@@ -269,11 +269,96 @@ ui <- (
                       display: block;
                     }
                     #main-text{
-                      font-size: 25px;
+                      font-size: 20px;
+                      width: 90vw;
+                      padding-top: 20px;
+                      padding-bottom: 60px;
+                      margin: 0 auto;
+                      text-align: center;
+                      color: #FFF;
+                      font-weight: 400;
                     }
                     #homepage{
                       margin-left:-2.5vw;
-                      margin-top: -50px;
+                      margin-top:-20px;
+                      width:100vw;
+                      height: 95vh;
+                      background-color: #030303;
+                    }
+                    #aboutpage{
+                      margin-left: -2.5vw;
+                      margin-top: -20px;
+                      width: 100vw;
+                      height: 120vh;
+                      background-color: #030303;
+                    }
+                    #main-image{
+                      width: 102vw;
+                    }
+                    #main-head{
+                      margin: 0 auto;
+                      padding-top: 60px;
+                      text-align: center;
+                      font-size: 50px;
+                      font-family: "Raleway";
+                      font-weight: 800;
+                      color: #FFF;
+                      letter-spacing: 2px;
+                    }
+                    #homepage > h5{
+                      color: #FFF;
+                      margin: 0 auto;
+                      text-align: center;
+                    }
+                    #homepage > h5 > a,
+                    #brett-links>a,
+                    #gabby-links>a{
+                      color: #FFF;
+                      text-decoration: none;
+                      transition: all 350ms ease-in-out;
+                    }
+                    #homepage > h5 > a:hover,
+                    #brett-links>a:hover,
+                    #gabby-links>a:hover{
+                      color: #C9082A;
+                    }
+                    #brett-links,
+                    #gabby-links{
+                      margin: 0 auto;
+                      text-align: center;
+                      padding-top: 10px;
+                      padding-bottom: 50px;
+                    }
+                    #brett-head,
+                    #gabby-head{
+                      margin: 0 auto;
+                      padding-top: 20px;
+                      text-align: center;
+                      font-size: 24px;
+                      font-family: "Raleway";
+                      font-weight: 800;
+                      color: #FFF;
+                      letter-spacing: 2px;
+                      text-transform: uppercase;
+                    }
+                    #brett-text,
+                    #gabby-text{
+                      font-size: 16px;
+                      width: 80vw;
+                      padding-top: 20px;
+                      padding-bottom: 10px;
+                      margin: 0 auto;
+                      text-align: center;
+                      color: #FFF;
+                      font-weight: 400;
+                    }
+                    #brett-pic,
+                    #gabby-pic{
+                      height: 350px;
+                      margin-left: auto;
+                      margin-right: auto;
+                      display: block;
+                      padding-top: 60px;
                     }
                     ')),
     
@@ -289,7 +374,16 @@ ui <- (
       tabPanel("Home",
                mainPanel(
                  div(id="homepage",
-                 includeHTML("html_pages/home.html"))
+                 #includeHTML("html_pages/home.html")
+                 img(src="home-head.jpg", id="main-image"),
+                 h1("LOCKDOWN BASKETBALL: NBA TEAM COMPS", id="main-head"),
+                 h3("Inspired by a friend’s sports analytics final project, we set out to dive deeper into the similarities between NBA teams over the last five years.
+                      The tools in this application will hopefully be both useful and entertaining in comparing multiple iterations of organizations and identifying trends across the NBA.
+                      All of our data is regular season data, collected from both NBA.com/stats as well as NBAstuffer.com. We will be making updates that will include playoff data once
+                      the 2019-2020 NBA season has fully concluded.", id="main-text"),
+                 hr(),
+                 h5("Brett Kornfeld (",tags$a(href="www.twitter.com/KornHoops", "@KornHoops"),")   |   Gabby Herrera-Lim (", tags$a(href="https://www.gcherreralim.com", "gcherreralim.com"),")")
+                 )
                )),
       
       ########## UI CODE FOR 'TEAM EVALUATION' TAB ##########
@@ -612,8 +706,32 @@ ui <- (
       ########## UI CODE FOR 'ABOUT US' TAB ##########
       tabPanel("About Us",
                mainPanel(
-                 #includeHTML("html_pages/about.html")
-                 h3("About Us!")
+                 div(id="aboutpage",
+                     #includeHTML("html_pages/home.html")
+                     div(id="aboutcontent",
+                     img(src="brett-pic.jpg", id="brett-pic"),
+                     h1("Brett Kornfeld (concept/structure)", id="brett-head"),
+                     h3("A basketball (and sports in general) junkie in every fashion, Brett received his Master's of Business Analytics  from the Mendoza College of Business at the University of
+                        Notre Dame in 2020. A graduate of Indiana University's Kelley School of Business in 2018, Brett is a two-time participant in Larry Coon's Sports Business Classroom at the 
+                        NBA Summer League, specializing in both video/scouting and salary cap. He is actively seeking work in professional or collegiate men's or women's basketball on the analytics 
+                        or operations side.", id="brett-text"),
+                     h5(id="brett-links",
+                        tags$a(href="www.twitter.com/KornHoops", "@KornHoops"),
+                        br(),
+                        br(),
+                        tags$a(href="mailto:brettkornfeld@gmail.com", "E-mail Brett!")),
+                     hr(),
+                     img(src="gabby-pic.jpg", id="gabby-pic"),
+                     h1("Gabby Herrera-Lim (design/app)", id="gabby-head"),
+                     h3("Gabby graduated with degrees in Business Analytics (MS, University of Notre Dame) and Business Administration (BS, University of the Philippines, Diliman). He is currently an
+                        economic analyst at the Asian Development Bank in the Philippines. In his spare time, he loves talking sports (especially basketball), designing content and apps, binging shows, 
+                        and being a LeBron James apologist.", id="gabby-text"),
+                     h5(id="gabby-links",
+                        tags$a(href="https://gcherreralim.com", "Portfolio"),
+                        br(),
+                        br(),
+                        tags$a(href="mailto:gcherreralim@alumni.nd.edu", "E-mail Gabby!")
+                     )))
                ))
     )
   )
