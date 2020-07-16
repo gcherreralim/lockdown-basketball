@@ -282,14 +282,14 @@ ui <- (
                       margin-left:-2.5vw;
                       margin-top:-20px;
                       width:100vw;
-                      height: 95vh;
+                      height: 100%;
                       background-color: #030303;
                     }
                     #aboutpage{
                       margin-left: -2.5vw;
                       margin-top: -20px;
                       width: 100vw;
-                      height: 120vh;
+                      height: 100%;
                       background-color: #030303;
                     }
                     #main-image{
@@ -309,6 +309,7 @@ ui <- (
                       color: #FFF;
                       margin: 0 auto;
                       text-align: center;
+                      padding-bottom: 200px;
                     }
                     #homepage > h5 > a,
                     #brett-links>a,
